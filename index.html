@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>습관 트래커 ✨</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #FDF7F9; --text: #3D2B35; --text-light: #9B8490;
+    --card-bg: #FFFFFF; --border: rgba(180,140,160,0.15);
+  }
+  body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 1.5rem 1rem 3rem; }
+
+  .top-bar { max-width: 900px; margin: 0 auto 1.2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  .app-title { font-size: 22px; font-weight: 700; color: var(--text); }
+  .app-title span { color: #E8879A; }
+  .today-label { font-size: 12px; color: var(--text-light); margin-top: 3px; }
+
+  .top-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .month-nav { display: flex; align-items: center; gap: 10px; background: white; border: 1px solid var(--border); border-radius: 100px; padding: 5px 14px; }
+  .month-nav span { font-size: 13px; font-weight: 600; color: var(--text); min-width: 80px; text-align: center; }
+  .month-nav button { background: none; border: none; cursor: pointer; color: var(--text-light); font-size: 17px; line-height: 1; padding: 2px; border-radius: 50%; transition: background 0.15s; }
+  .month-nav button:hover { background: var(--bg); }
+
+  .btn-edit { display: flex; align-items: center; gap: 5px; background: white; border: 1px solid var(--border); border-radius: 100px; padding: 5px 14px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 600; color: var(--text-light); cursor: pointer; transition: all 0.15s; }
+  .btn-edit:hover { border-color: rgba(180,140,160,0.4); color: var(--text); }
+
+  .summary-bar { max-width: 900px; margin: 0 auto 1rem; display: flex; gap: 8px; flex-wrap: wrap; }
+  .summary-pill { background: white; border: 1px solid var(--border); border-radius: 100px; padding: 4px 14px; font-size: 12px; color: var(--text-light); }
+  .summary-pill strong { color: var(--text); }
+
+  .grid { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .card { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); padding: 14px; transition: transform 0.15s; position: relative; }
+  .card:hover { transform: translateY(-2px); }
+
+  .card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .card-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .card-name { font-size: 13px; font-weight: 700; line-height: 1.2; }
+  .card-count { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+
+  .card-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s; }
+  .card:hover .card-actions { opacity: 1; }
+  .card-action-btn { width: 22px; height: 22px; border-radius: 50%; border: none; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; background: rgba(180,140,160,0.12); color: var(--text-light); transition: all 0.15s; }
+  .card-action-btn:hover { background: rgba(180,140,160,0.28); color: var(--text); }
+  .card-action-btn.del:hover { background: #fde8e8; color: #c0393a; }
+
+  .cal-month { font-size: 10px; color: var(--text-light); font-weight: 700; letter-spacing: 0.04em; margin-bottom: 6px; }
+  .dot-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+  .dot { width: 14px; height: 14px; border-radius: 50%; border: none; cursor: pointer; padding: 0; background: rgba(180,140,160,0.12); transition: all 0.15s; flex-shrink: 0; }
+  .dot:hover:not(.future) { background: rgba(180,140,160,0.28); }
+  .dot.today { box-shadow: 0 0 0 2px rgba(180,140,160,0.45); }
+  .dot.future { opacity: 0.3; cursor: default; }
+  .streak { margin-top: 8px; font-size: 11px; color: var(--text-light); display: flex; align-items: center; gap: 4px; }
+
+  /* add-card button */
+  .card-add { background: white; border-radius: 16px; border: 1.5px dashed rgba(180,140,160,0.3); padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: all 0.15s; min-height: 120px; }
+  .card-add:hover { border-color: rgba(180,140,160,0.6); background: #fdf2f5; }
+  .card-add-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(180,140,160,0.12); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-light); }
+  .card-add span { font-size: 12px; color: var(--text-light); font-weight: 600; }
+
+  /* Modal overlay */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(61,43,53,0.35); z-index: 100; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: white; border-radius: 20px; padding: 1.5rem; width: 360px; max-width: calc(100vw - 2rem); box-shadow: 0 8px 40px rgba(61,43,53,0.15); }
+  .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 1rem; color: var(--text); }
+  .modal label { font-size: 12px; font-weight: 600; color: var(--text-light); display: block; margin-bottom: 4px; margin-top: 12px; }
+  .modal label:first-of-type { margin-top: 0; }
+  .modal input[type=text] { width: 100%; border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-family: 'Nunito', sans-serif; font-size: 13px; color: var(--text); outline: none; background: var(--bg); }
+  .modal input[type=text]:focus { border-color: rgba(180,140,160,0.5); }
+
+  .emoji-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .emoji-btn { width: 34px; height: 34px; border-radius: 10px; border: 1.5px solid transparent; background: rgba(180,140,160,0.08); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.12s; }
+  .emoji-btn:hover { background: rgba(180,140,160,0.2); }
+  .emoji-btn.selected { border-color: #E8879A; background: #fde8ef; }
+
+  .color-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .color-btn { width: 28px; height: 28px; border-radius: 50%; border: 2.5px solid transparent; cursor: pointer; transition: all 0.12s; }
+  .color-btn:hover { transform: scale(1.1); }
+  .color-btn.selected { border-color: var(--text); }
+
+  .modal-actions { display: flex; gap: 8px; margin-top: 1.2rem; }
+  .modal-actions button { flex: 1; padding: 9px; border-radius: 10px; border: none; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+  .btn-cancel { background: rgba(180,140,160,0.1); color: var(--text-light); }
+  .btn-cancel:hover { background: rgba(180,140,160,0.2); }
+  .btn-save { background: #E8879A; color: white; }
+  .btn-save:hover { background: #d9708a; }
+
+  .btn-delete-habit { width: 100%; margin-top: 10px; padding: 8px; border-radius: 10px; border: 1px solid #fde0e0; background: #fff5f5; color: #c0393a; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .btn-delete-habit:hover { background: #fde0e0; }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div>
+    <div class="app-title">오늘의 습관 <span>✨</span></div>
+    <div class="today-label" id="today-label"></div>
+  </div>
+  <div class="top-right">
+    <div class="month-nav">
+      <button onclick="changeMonth(-1)">&#8249;</button>
+      <span id="month-label"></span>
+      <button onclick="changeMonth(1)">&#8250;</button>
+    </div>
+  </div>
+</div>
+
+<div class="summary-bar" id="summary-bar"></div>
+<div class="grid" id="habits-grid"></div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">새 습관 추가</div>
+    <label>이름</label>
+    <input type="text" id="modal-name" placeholder="예: 스트레칭" maxlength="12">
+    <label>아이콘</label>
+    <div class="emoji-grid" id="emoji-grid"></div>
+    <label>색상</label>
+    <div class="color-grid" id="color-grid"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">취소</button>
+      <button class="btn-save" onclick="saveHabit()">저장</button>
+    </div>
+    <button class="btn-delete-habit" id="btn-delete-habit" onclick="deleteHabit()" style="display:none;">이 습관 삭제하기</button>
+  </div>
+</div>
+
+<script>
+const EMOJIS = ['🏋️','📚','💧','🌙','✏️','🌿','🧘','🎨','🎵','🏃','🥗','😴','💊','🧹','💰','🐶','🚴','🤸','📝','🌅','🍎','🧠','💪','🫁'];
+const COLORS = [
+  { color:'#F9C6D0', mid:'#E8879A' },
+  { color:'#C6D9F9', mid:'#7AAAE0' },
+  { color:'#C6EFF9', mid:'#5BBEDD' },
+  { color:'#D4C6F9', mid:'#9E7AE0' },
+  { color:'#F9EAC6', mid:'#E0B85B' },
+  { color:'#C6F9E0', mid:'#5BD4A0' },
+  { color:'#F9D6C6', mid:'#E0925B' },
+  { color:'#F9C6F2', mid:'#E07ADA' },
+  { color:'#C6F9F2', mid:'#5BD4C8' },
+  { color:'#DCF9C6', mid:'#8ED45B' },
+];
+
+const DEFAULT_HABITS = [
+  { id:'exercise',   name:'운동/헬스',     icon:'🏋️', color:'#F9C6D0', mid:'#E8879A' },
+  { id:'reading',    name:'독서',          icon:'📚', color:'#C6D9F9', mid:'#7AAAE0' },
+  { id:'water',      name:'물 마시기',     icon:'💧', color:'#C6EFF9', mid:'#5BBEDD' },
+  { id:'sleep',      name:'수면',          icon:'🌙', color:'#D4C6F9', mid:'#9E7AE0' },
+  { id:'study',      name:'공부',          icon:'✏️', color:'#F9EAC6', mid:'#E0B85B' },
+  { id:'meditation', name:'명상/마음챙김', icon:'🌿', color:'#C6F9E0', mid:'#5BD4A0' },
+];
+
+let habits = [];
+let storage = {};
+
+function loadHabits() {
+  try {
+    const saved = localStorage.getItem('habits_list');
+    habits = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_HABITS));
+  } catch(e) { habits = JSON.parse(JSON.stringify(DEFAULT_HABITS)); }
+  habits.forEach(h => {
+    try { storage[h.id] = JSON.parse(localStorage.getItem('habit_' + h.id) || '{}'); }
+    catch(e) { storage[h.id] = {}; }
+  });
+}
+
+function saveHabits() { localStorage.setItem('habits_list', JSON.stringify(habits)); }
+function saveData(id) { localStorage.setItem('habit_' + id, JSON.stringify(storage[id])); }
+
+const today = new Date();
+let viewYear = today.getFullYear();
+let viewMonth = today.getMonth();
+
+function key(y,m,d) { return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+function isToday(y,m,d) { return y===today.getFullYear()&&m===today.getMonth()&&d===today.getDate(); }
+function isFuture(y,m,d) { return new Date(y,m,d)>new Date(today.getFullYear(),today.getMonth(),today.getDate()); }
+function daysInMonth(y,m) { return new Date(y,m+1,0).getDate(); }
+function getStreak(id) {
+  let s=0, d=new Date(today.getFullYear(),today.getMonth(),today.getDate());
+  while(storage[id]&&storage[id][key(d.getFullYear(),d.getMonth(),d.getDate())]){s++;d.setDate(d.getDate()-1);}
+  return s;
+}
+function toggleDay(id,y,m,d) {
+  if(isFuture(y,m,d)) return;
+  const k=key(y,m,d);
+  storage[id][k]=!storage[id][k];
+  saveData(id); render();
+}
+
+const monthNames=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+
+function render() {
+  const isNow=viewYear===today.getFullYear()&&viewMonth===today.getMonth();
+  const dim=daysInMonth(viewYear,viewMonth);
+  const dayNames=['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
+  document.getElementById('today-label').textContent=`${today.getFullYear()}년 ${monthNames[today.getMonth()]} ${today.getDate()}일 ${dayNames[today.getDay()]}`;
+  document.getElementById('month-label').textContent=`${viewYear}년 ${monthNames[viewMonth]}`;
+  const todayKey=key(today.getFullYear(),today.getMonth(),today.getDate());
+  const doneToday=isNow?habits.filter(h=>storage[h.id]&&storage[h.id][todayKey]).length:0;
+  const totalMonth=habits.reduce((s,h)=>s+Object.values(storage[h.id]||{}).filter(Boolean).length,0);
+  document.getElementById('summary-bar').innerHTML=isNow
+    ?`<div class="summary-pill">오늘 <strong>${doneToday}/${habits.length}</strong> 완료</div><div class="summary-pill">이번 달 누적 <strong>${totalMonth}</strong>회</div>`
+    :`<div class="summary-pill">${monthNames[viewMonth]} 누적 <strong>${totalMonth}</strong>회</div>`;
+
+  const grid=document.getElementById('habits-grid');
+  grid.innerHTML=habits.map(h=>{
+    const monthCount=Object.values(storage[h.id]||{}).filter(Boolean).length;
+    const streak=isNow?getStreak(h.id):0;
+    let dots='';
+    for(let d=1;d<=dim;d++){
+      const k=key(viewYear,viewMonth,d);
+      const done=storage[h.id]&&storage[h.id][k];
+      const cls=['dot',done?'checked':'',isToday(viewYear,viewMonth,d)?'today':'',isFuture(viewYear,viewMonth,d)?'future':''].filter(Boolean).join(' ');
+      const bg=done?`background:${h.mid};`:'';
+      const dis=isFuture(viewYear,viewMonth,d)?'disabled':'';
+      dots+=`<button class="${cls}" style="${bg}" onclick="toggleDay('${h.id}',${viewYear},${viewMonth},${d})" ${dis} title="${viewYear}년 ${viewMonth+1}월 ${d}일"></button>`;
+    }
+    return `<div class="card">
+      <div class="card-actions">
+        <button class="card-action-btn" onclick="openEditModal('${h.id}')" title="수정">✏️</button>
+      </div>
+      <div class="card-header">
+        <div class="card-icon" style="background:${h.color};">${h.icon}</div>
+        <div><div class="card-name">${h.name}</div><div class="card-count">${monthCount}회 완료</div></div>
+      </div>
+      <div class="cal-month">${viewYear}년 ${monthNames[viewMonth]}</div>
+      <div class="dot-grid">${dots}</div>
+      ${streak>1?`<div class="streak">🔥 ${streak}일 연속!</div>`:''}
+    </div>`;
+  }).join('')
+  + `<button class="card-add" onclick="openAddModal()">
+      <div class="card-add-icon">+</div>
+      <span>습관 추가</span>
+    </button>`;
+}
+
+function changeMonth(dir) {
+  viewMonth+=dir;
+  if(viewMonth>11){viewMonth=0;viewYear++;}
+  if(viewMonth<0){viewMonth=11;viewYear--;}
+  render();
+}
+
+// Modal state
+let modalMode='add'; // 'add' | 'edit'
+let editingId=null;
+let selectedEmoji=EMOJIS[0];
+let selectedColorIdx=0;
+
+function buildModalSelectors() {
+  document.getElementById('emoji-grid').innerHTML=EMOJIS.map(e=>
+    `<button class="emoji-btn${e===selectedEmoji?' selected':''}" onclick="selectEmoji('${e}')">${e}</button>`
+  ).join('');
+  document.getElementById('color-grid').innerHTML=COLORS.map((c,i)=>
+    `<button class="color-btn${i===selectedColorIdx?' selected':''}" style="background:${c.color};" onclick="selectColor(${i})"></button>`
+  ).join('');
+}
+
+function selectEmoji(e) { selectedEmoji=e; buildModalSelectors(); }
+function selectColor(i) { selectedColorIdx=i; buildModalSelectors(); }
+
+function openAddModal() {
+  modalMode='add'; editingId=null;
+  selectedEmoji=EMOJIS[0]; selectedColorIdx=0;
+  document.getElementById('modal-title').textContent='새 습관 추가';
+  document.getElementById('modal-name').value='';
+  document.getElementById('btn-delete-habit').style.display='none';
+  buildModalSelectors();
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('modal-name').focus(),100);
+}
+
+function openEditModal(id) {
+  const h=habits.find(x=>x.id===id);
+  if(!h) return;
+  modalMode='edit'; editingId=id;
+  selectedEmoji=h.icon;
+  selectedColorIdx=COLORS.findIndex(c=>c.color===h.color);
+  if(selectedColorIdx<0) selectedColorIdx=0;
+  document.getElementById('modal-title').textContent='습관 수정';
+  document.getElementById('modal-name').value=h.name;
+  document.getElementById('btn-delete-habit').style.display='block';
+  buildModalSelectors();
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('modal-name').focus(),100);
+}
+
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModalOutside(e) { if(e.target===document.getElementById('modal-overlay')) closeModal(); }
+
+function saveHabit() {
+  const name=document.getElementById('modal-name').value.trim();
+  if(!name) { document.getElementById('modal-name').focus(); return; }
+  const c=COLORS[selectedColorIdx];
+  if(modalMode==='add') {
+    const id='habit_'+Date.now();
+    habits.push({id, name, icon:selectedEmoji, color:c.color, mid:c.mid});
+    storage[id]={};
+    saveData(id);
+  } else {
+    const h=habits.find(x=>x.id===editingId);
+    if(h){ h.name=name; h.icon=selectedEmoji; h.color=c.color; h.mid=c.mid; }
+  }
+  saveHabits(); closeModal(); render();
+}
+
+function deleteHabit() {
+  if(!confirm('이 습관을 삭제할까요? 기록도 모두 사라져요.')) return;
+  habits=habits.filter(h=>h.id!==editingId);
+  localStorage.removeItem('habit_'+editingId);
+  delete storage[editingId];
+  saveHabits(); closeModal(); render();
+}
+
+loadHabits();
+render();
+</script>
+</body>
+</html>

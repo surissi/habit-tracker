@@ -13,12 +13,13 @@
   --accent: #E8879A; --accent-bg: #F9C6D0;
 }
 body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-/* ── Loading ── */
 .loading-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-light); }
 
 /* ── Auth ── */
-.auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+.auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; position: relative; }
+.auth-lang-toggle { position: absolute; top: 1.2rem; right: 1.2rem; display: flex; background: white; border: 1px solid var(--border); border-radius: 100px; padding: 3px; gap: 2px; }
+.auth-lang-btn { padding: 4px 10px; border: none; background: none; border-radius: 100px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700; color: var(--text-light); cursor: pointer; transition: all 0.15s; }
+.auth-lang-btn.active { background: var(--accent); color: white; }
 .auth-box { background: white; border-radius: 24px; border: 1px solid var(--border); padding: 2.5rem 2rem; width: 100%; max-width: 380px; box-shadow: 0 4px 24px rgba(61,43,53,0.08); }
 .auth-logo { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 4px; }
 .auth-logo span { color: var(--accent); }
@@ -83,19 +84,20 @@ body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--te
 .card:hover .card-actions { opacity: 1; }
 .card-action-btn { width: 22px; height: 22px; border-radius: 50%; border: none; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; background: rgba(180,140,160,0.12); color: var(--text-light); transition: all 0.15s; }
 .card-action-btn:hover { background: rgba(180,140,160,0.28); }
-.cal-month { font-size: 10px; color: var(--text-light); font-weight: 700; letter-spacing: 0.04em; margin-bottom: 6px; }
-.dot-grid { display: flex; flex-wrap: wrap; gap: 4px; }
-.dot { width: 14px; height: 14px; border-radius: 50%; border: none; cursor: pointer; padding: 0; background: rgba(180,140,160,0.12); transition: all 0.15s; flex-shrink: 0; }
+/* 7-per-row dot grid */
+.dot-grid { display: grid; grid-template-columns: repeat(7, 14px); gap: 4px; }
+.dot { width: 14px; height: 14px; border-radius: 50%; border: none; cursor: pointer; padding: 0; background: rgba(180,140,160,0.12); transition: all 0.15s; }
 .dot:hover:not(.future) { background: rgba(180,140,160,0.28); }
 .dot.today { box-shadow: 0 0 0 2px rgba(180,140,160,0.45); }
 .dot.future { opacity: 0.3; cursor: default; }
+.dot.empty { background: transparent; cursor: default; }
 .streak { margin-top: 8px; font-size: 11px; color: var(--text-light); display: flex; align-items: center; gap: 4px; }
 .card-add { background: white; border-radius: 16px; border: 1.5px dashed rgba(180,140,160,0.3); padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: all 0.15s; min-height: 120px; width: 100%; }
 .card-add:hover { border-color: rgba(180,140,160,0.6); background: #fdf2f5; }
 .card-add-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(180,140,160,0.12); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-light); }
 .card-add span { font-size: 12px; color: var(--text-light); font-weight: 700; }
 
-/* ── Habit Modal ── */
+/* ── Modals ── */
 .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(61,43,53,0.35); z-index: 100; align-items: center; justify-content: center; padding: 1rem; }
 .modal-overlay.open { display: flex; }
 .modal { background: white; border-radius: 20px; padding: 1.5rem; width: 360px; max-width: 100%; max-height: 90vh; overflow-y: auto; }
@@ -147,13 +149,11 @@ body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--te
 .upload-area { border: 1.5px dashed rgba(180,140,160,0.4); border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s; }
 .upload-area:hover { border-color: var(--accent); background: #fdf5f7; }
 .upload-area p { font-size: 12px; color: var(--text-light); margin-top: 6px; }
-/* theme rows */
 .theme-row { display: flex; align-items: center; gap: 12px; border-radius: 16px; padding: 11px 14px; border: 1.5px solid transparent; cursor: pointer; transition: all 0.15s; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
 .theme-row.selected { border-width: 2px; }
 .theme-dot-sm { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
 .theme-check { margin-left: auto; font-size: 13px; opacity: 0; }
 .theme-row.selected .theme-check { opacity: 1; }
-/* app rows */
 .app-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 14px; margin-bottom: 6px; background: rgba(180,140,160,0.06); cursor: pointer; transition: all 0.15s; }
 .app-row:hover { background: rgba(180,140,160,0.12); }
 .app-row-left { display: flex; align-items: center; gap: 10px; }
@@ -179,27 +179,31 @@ body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--te
 
 <!-- 로그인 -->
 <div class="auth-screen" id="auth-screen" style="display:none;">
+  <div class="auth-lang-toggle">
+    <button class="auth-lang-btn active" id="auth-lang-ko" onclick="setAuthLang('ko')">한국어</button>
+    <button class="auth-lang-btn" id="auth-lang-en" onclick="setAuthLang('en')">EN</button>
+  </div>
   <div class="auth-box">
     <div class="auth-logo">Habit Tracker <span>✨</span></div>
-    <div class="auth-sub">Track your habits, build your life.</div>
+    <div class="auth-sub" id="auth-sub-text"></div>
     <div class="auth-tab">
-      <button class="active" id="tab-login" onclick="switchTab('login')">Log In</button>
-      <button id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
+      <button class="active" id="tab-login" onclick="switchTab('login')" data-ko="로그인" data-en="Log In">로그인</button>
+      <button id="tab-signup" onclick="switchTab('signup')" data-ko="회원가입" data-en="Sign Up">회원가입</button>
     </div>
-    <div class="auth-field"><label>Email</label><input type="text" id="auth-email" placeholder="Enter your email"></div>
-    <div class="auth-field"><label>Password</label><input type="password" id="auth-password" placeholder="Enter your password"></div>
-    <div class="auth-field" id="field-name" style="display:none;"><label>Nickname</label><input type="text" id="auth-name" placeholder="Enter your nickname"></div>
-    <button class="btn-primary" id="auth-submit-btn" onclick="submitAuth()">Log In</button>
-    <div class="auth-divider"><hr><span>or</span><hr></div>
+    <div class="auth-field"><label id="lbl-email"></label><input type="text" id="auth-email" placeholder=""></div>
+    <div class="auth-field"><label id="lbl-password"></label><input type="password" id="auth-password" placeholder=""></div>
+    <div class="auth-field" id="field-name" style="display:none;"><label id="lbl-nickname"></label><input type="text" id="auth-name" placeholder=""></div>
+    <button class="btn-primary" id="auth-submit-btn" onclick="submitAuth()"></button>
+    <div class="auth-divider"><hr><span id="auth-or-text"></span><hr></div>
     <button class="btn-google" onclick="loginWithGoogle()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">Continue with Google
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"><span id="btn-google-text"></span>
     </button>
     <div class="auth-error" id="auth-error"></div>
-    <div class="auth-divider"><hr><span>or</span><hr></div>
-    <button class="btn-guest" onclick="continueAsGuest()">Start without an account</button>
+    <div class="auth-divider"><hr><span id="auth-or-text2"></span><hr></div>
+    <button class="btn-guest" onclick="continueAsGuest()" id="btn-guest-text"></button>
     <div class="auth-hint">
-      <span>🔄 Log in = synced across all your devices</span>
-      <span>📱 Guest = saved on this device only</span>
+      <span id="auth-hint-login"></span>
+      <span id="auth-hint-guest"></span>
     </div>
   </div>
 </div>
@@ -222,7 +226,7 @@ body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--te
         <button onclick="changeMonth(1)">&#8250;</button>
       </div>
       <button class="btn-settings" onclick="openSettingsModal('profile')" title="Settings">⚙️</button>
-      <button class="btn-logout" onclick="logout()">Log Out</button>
+      <button class="btn-logout" id="btn-logout" onclick="logout()"></button>
     </div>
   </div>
   <div class="summary-bar" id="summary-bar"></div>
@@ -232,18 +236,18 @@ body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--te
 <!-- 습관 모달 -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
   <div class="modal">
-    <div class="modal-title" id="modal-title">새 습관 추가</div>
-    <label>이름</label>
-    <input type="text" id="modal-name" placeholder="예: 스트레칭" maxlength="12">
-    <label>아이콘</label>
+    <div class="modal-title" id="modal-title"></div>
+    <label id="lbl-habit-name"></label>
+    <input type="text" id="modal-name" maxlength="12">
+    <label id="lbl-habit-icon"></label>
     <div class="emoji-grid" id="emoji-grid"></div>
-    <label>색상</label>
+    <label id="lbl-habit-color"></label>
     <div class="color-grid" id="color-grid"></div>
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">취소</button>
-      <button class="btn-save" onclick="saveHabit()">저장</button>
+      <button class="btn-cancel" onclick="closeModal()" id="btn-habit-cancel"></button>
+      <button class="btn-save" onclick="saveHabit()" id="btn-habit-save"></button>
     </div>
-    <button class="btn-delete-habit" id="btn-delete-habit" onclick="deleteHabit()" style="display:none;">이 습관 삭제하기</button>
+    <button class="btn-delete-habit" id="btn-delete-habit" onclick="deleteHabit()" style="display:none;"></button>
   </div>
 </div>
 
@@ -251,77 +255,73 @@ body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--te
 <div class="modal-overlay" id="settings-overlay" onclick="closeSettingsOutside(event)">
   <div class="settings-modal">
     <div class="settings-tabs">
-      <button class="settings-tab active" id="stab-profile" onclick="switchSettingsTab('profile')">🙋 나</button>
-      <button class="settings-tab" id="stab-theme" onclick="switchSettingsTab('theme')">🎨 테마</button>
-      <button class="settings-tab" id="stab-app" onclick="switchSettingsTab('app')">⚙️ 앱 설정</button>
+      <button class="settings-tab active" id="stab-profile" onclick="switchSettingsTab('profile')"></button>
+      <button class="settings-tab" id="stab-theme" onclick="switchSettingsTab('theme')"></button>
+      <button class="settings-tab" id="stab-app" onclick="switchSettingsTab('app')"></button>
     </div>
     <div class="settings-body">
-
       <!-- 프로필 -->
       <div class="s-panel active" id="s-panel-profile">
         <div class="profile-avatar-preview" id="s-avatar-preview"></div>
-        <div class="s-field"><label>닉네임</label><input type="text" id="s-nickname" placeholder="닉네임 입력" maxlength="16"></div>
-        <div class="s-field"><label>한줄 소개</label><input type="text" id="s-bio" placeholder="오늘도 화이팅 🌱" maxlength="40"></div>
+        <div class="s-field"><label id="lbl-s-nickname"></label><input type="text" id="s-nickname" maxlength="16"></div>
+        <div class="s-field"><label id="lbl-s-bio"></label><input type="text" id="s-bio" maxlength="40"></div>
         <div class="s-field">
-          <label>프로필 이미지</label>
+          <label id="lbl-s-profileimg"></label>
           <div class="avatar-type-tabs">
-            <button class="active" id="av-tab-emoji" onclick="switchAvatarTab('emoji')">이모지</button>
-            <button id="av-tab-photo" onclick="switchAvatarTab('photo')">사진 업로드</button>
+            <button class="active" id="av-tab-emoji" onclick="switchAvatarTab('emoji')" id="btn-av-emoji"></button>
+            <button id="av-tab-photo" onclick="switchAvatarTab('photo')" id="btn-av-photo"></button>
           </div>
           <div id="av-emoji-sec"><div class="avatar-emoji-grid" id="avatar-emoji-grid"></div></div>
           <div id="av-photo-sec" style="display:none;">
             <div class="upload-area" onclick="document.getElementById('s-photo-input').click()">
               <div style="font-size:28px;">📷</div>
-              <p>클릭해서 사진 선택</p>
+              <p id="lbl-upload-photo"></p>
               <input type="file" id="s-photo-input" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)">
             </div>
           </div>
         </div>
       </div>
-
       <!-- 테마 -->
       <div class="s-panel" id="s-panel-theme">
-        <div class="s-label" style="margin-top:0;">색상 테마</div>
+        <div class="s-label" id="lbl-theme-title" style="margin-top:0;"></div>
         <div id="theme-rows"></div>
-        <div class="s-label">미리보기</div>
+        <div class="s-label" id="lbl-theme-preview"></div>
         <div id="theme-preview-chips" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;"></div>
       </div>
-
       <!-- 앱 설정 -->
       <div class="s-panel" id="s-panel-app">
-        <div class="s-label" style="margin-top:0;">계정</div>
+        <div class="s-label" id="lbl-app-account" style="margin-top:0;"></div>
         <div class="app-row" id="s-account-row" onclick="handleAccountAction()">
           <div class="app-row-left">
             <span style="font-size:16px;">🔗</span>
-            <div><div class="app-row-name" id="s-account-name">로그인하기</div><div class="app-row-desc" id="s-account-desc">기기 간 동기화</div></div>
+            <div><div class="app-row-name" id="s-account-name"></div><div class="app-row-desc" id="s-account-desc"></div></div>
           </div>
           <div class="app-row-right" id="s-account-right">→</div>
         </div>
-        <div class="s-label">언어</div>
+        <div class="s-label" id="lbl-app-lang"></div>
         <div class="app-row" style="cursor:default;">
           <div class="app-row-left">
             <span style="font-size:16px;">🌐</span>
-            <div class="app-row-name">앱 언어</div>
+            <div class="app-row-name" id="lbl-app-lang-name"></div>
           </div>
           <div class="lang-toggle">
-            <button class="lang-btn active" id="lang-ko" onclick="setLang('ko',this)">한국어</button>
-            <button class="lang-btn" id="lang-en" onclick="setLang('en',this)">English</button>
+            <button class="lang-btn active" id="slang-ko" onclick="setAppLang('ko',this)">한국어</button>
+            <button class="lang-btn" id="slang-en" onclick="setAppLang('en',this)">English</button>
           </div>
         </div>
-        <div class="s-label">데이터</div>
+        <div class="s-label" id="lbl-app-data"></div>
         <div class="app-row danger-border" onclick="confirmReset()">
           <div class="app-row-left">
             <span style="font-size:16px;">🗑️</span>
-            <div class="app-row-name" style="color:#c0393a;">전체 기록 초기화</div>
+            <div class="app-row-name" id="lbl-reset-btn" style="color:#c0393a;"></div>
           </div>
         </div>
-        <div class="reset-note">습관 목록·달성·스트릭 데이터 모두 삭제. 되돌릴 수 없음</div>
+        <div class="reset-note" id="lbl-reset-note"></div>
       </div>
-
     </div>
     <div class="settings-footer">
-      <button class="btn-cancel" onclick="closeSettingsModal()">취소</button>
-      <button class="btn-save" onclick="saveSettings()">저장</button>
+      <button class="btn-cancel" onclick="closeSettingsModal()" id="btn-settings-cancel"></button>
+      <button class="btn-save" onclick="saveSettings()" id="btn-settings-save"></button>
     </div>
   </div>
 </div>
@@ -345,7 +345,116 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-// ── Constants ──
+// ── i18n ──
+const T = {
+  ko: {
+    loading: '불러오는 중... ✨',
+    authSub: '로그인하고 습관을 기록해보세요',
+    login: '로그인', signup: '회원가입',
+    email: '이메일', password: '비밀번호', nickname: '닉네임',
+    emailPh: '이메일 입력', passwordPh: '비밀번호 입력', nicknamePh: '닉네임 입력',
+    submitLogin: '로그인', submitSignup: '회원가입',
+    or: '또는',
+    googleBtn: 'Google로 계속하기',
+    guestBtn: '계정 없이 시작하기',
+    hintLogin: 'Log in = 모든 기기에서 동기화',
+    hintGuest: 'Guest = 이 기기에서만 저장',
+    logout: '로그아웃',
+    today: (y,m,d,day) => `${y}년 ${['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'][m]} ${d}일 ${['일요일','월요일','화요일','수요일','목요일','금요일','토요일'][day]}`,
+    months: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+    todayDone: (d,t) => `오늘 ${d}/${t} 완료`,
+    monthTotal: (n) => `이번 달 누적 ${n}회`,
+    monthPastTotal: (m,n) => `${m} 누적 ${n}회`,
+    synced: '동기화됨', offline: '오프라인',
+    timesCompleted: (n) => `${n}회 완료`,
+    addHabit: '습관 추가',
+    streak: (n) => `🔥 ${n}일 연속!`,
+    habitModalAdd: '새 습관 추가', habitModalEdit: '습관 수정',
+    habitName: '이름', habitIcon: '아이콘', habitColor: '색상',
+    habitNamePh: '예: 스트레칭',
+    habitCancel: '취소', habitSave: '저장',
+    habitDelete: '이 습관 삭제하기',
+    habitDeleteConfirm: '이 습관을 삭제할까요? 기록도 모두 사라져요.',
+    stabProfile: '🙋 나', stabTheme: '🎨 테마', stabApp: '⚙️ 앱 설정',
+    sNickname: '닉네임', sBio: '한줄 소개', sBioPh: '오늘도 화이팅 🌱',
+    sNicknamePh: '닉네임 입력',
+    sProfileImg: '프로필 이미지',
+    avEmoji: '이모지', avPhoto: '사진 업로드',
+    uploadPhoto: '클릭해서 사진 선택',
+    themeTitle: '색상 테마', themePreview: '미리보기',
+    themeNames: ['핑크','노랑','하늘','보라','민트','그레이'],
+    appAccount: '계정', appLang: '언어', appLangName: '앱 언어', appData: '데이터',
+    loginAction: '로그인하기', loginDesc: '기기 간 동기화',
+    logoutAction: '로그아웃',
+    resetBtn: '전체 기록 초기화',
+    resetNote: '습관 목록·달성·스트릭 데이터 모두 삭제. 되돌릴 수 없음',
+    resetConfirm: '⚠️ 전체 기록 초기화\n\n모든 습관 기록이 삭제되며 되돌릴 수 없어요.\n정말 삭제하시겠어요?',
+    logoutConfirm: '로그아웃 하시겠어요?',
+    settingsCancel: '취소', settingsSave: '저장',
+    errInvalidEmail: '올바른 이메일 주소를 입력해주세요.',
+    errUserNotFound: '등록된 이메일이 없어요.',
+    errWrongPassword: '비밀번호가 틀렸어요.',
+    errEmailInUse: '이미 사용 중인 이메일이에요.',
+    errWeakPassword: '비밀번호는 6자 이상이어야 해요.',
+    errInvalidCred: '이메일 또는 비밀번호가 틀렸어요.',
+    errPopupClosed: '로그인 창이 닫혔어요.',
+    errGeneral: '오류가 발생했어요. 다시 시도해주세요.',
+  },
+  en: {
+    loading: 'Loading... ✨',
+    authSub: 'Track your habits, build your life.',
+    login: 'Log In', signup: 'Sign Up',
+    email: 'Email', password: 'Password', nickname: 'Nickname',
+    emailPh: 'Enter your email', passwordPh: 'Enter your password', nicknamePh: 'Enter your nickname',
+    submitLogin: 'Log In', submitSignup: 'Sign Up',
+    or: 'or',
+    googleBtn: 'Continue with Google',
+    guestBtn: 'Start without an account',
+    hintLogin: 'Log in = synced across all your devices',
+    hintGuest: 'Guest = saved on this device only',
+    logout: 'Log Out',
+    today: (y,m,d,day) => `${['January','February','March','April','May','June','July','August','September','October','November','December'][m]} ${d}, ${y} ${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][day]}`,
+    months: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    todayDone: (d,t) => `Today ${d}/${t} done`,
+    monthTotal: (n) => `This month ${n} total`,
+    monthPastTotal: (m,n) => `${m} total ${n}`,
+    synced: 'Synced', offline: 'Offline',
+    timesCompleted: (n) => `${n} done`,
+    addHabit: 'Add habit',
+    streak: (n) => `🔥 ${n} day streak!`,
+    habitModalAdd: 'Add New Habit', habitModalEdit: 'Edit Habit',
+    habitName: 'Name', habitIcon: 'Icon', habitColor: 'Color',
+    habitNamePh: 'e.g. Stretching',
+    habitCancel: 'Cancel', habitSave: 'Save',
+    habitDelete: 'Delete this habit',
+    habitDeleteConfirm: 'Delete this habit? All records will be lost.',
+    stabProfile: '🙋 Me', stabTheme: '🎨 Theme', stabApp: '⚙️ App',
+    sNickname: 'Nickname', sBio: 'Bio', sBioPh: 'e.g. Building better habits 🌱',
+    sNicknamePh: 'Enter nickname',
+    sProfileImg: 'Profile image',
+    avEmoji: 'Emoji', avPhoto: 'Upload photo',
+    uploadPhoto: 'Click to select a photo',
+    themeTitle: 'Color theme', themePreview: 'Preview',
+    themeNames: ['Pink','Yellow','Sky','Lilac','Mint','Gray'],
+    appAccount: 'Account', appLang: 'Language', appLangName: 'App language', appData: 'Data',
+    loginAction: 'Log in', loginDesc: 'Sync across all your devices',
+    logoutAction: 'Log out',
+    resetBtn: 'Reset all data',
+    resetNote: 'Deletes all habits, records & streaks. Cannot be undone.',
+    resetConfirm: '⚠️ Reset all data\n\nAll habit records will be deleted and cannot be recovered.\nAre you sure?',
+    logoutConfirm: 'Are you sure you want to log out?',
+    settingsCancel: 'Cancel', settingsSave: 'Save',
+    errInvalidEmail: 'Please enter a valid email address.',
+    errUserNotFound: 'No account found with this email.',
+    errWrongPassword: 'Incorrect password.',
+    errEmailInUse: 'This email is already in use.',
+    errWeakPassword: 'Password must be at least 6 characters.',
+    errInvalidCred: 'Incorrect email or password.',
+    errPopupClosed: 'Sign-in popup was closed.',
+    errGeneral: 'Something went wrong. Please try again.',
+  }
+};
+
 const HABIT_EMOJIS = ['🏋️','📚','💧','🌙','✏️','🌿','🧘','🎨','🎵','🏃','🥗','😴','💊','🧹','💰','🐶','🚴','🤸','📝','🌅','🍎','🧠','💪','🫁'];
 const AVATAR_EMOJIS = ['😊','😎','🥰','🤩','😄','🐱','🐶','🦊','🐼','🐨','🐸','🦁','🐯','🐻','🐺','🦄','🐙','🌸','⭐','🌈','🍀','🎀','💎','🔥','🌙','☀️','🍓','🍭','🎵','🎨'];
 const COLORS = [
@@ -354,12 +463,12 @@ const COLORS = [
   {color:'#F9D6C6',mid:'#E0925B'},{color:'#F9C6F2',mid:'#E07ADA'},{color:'#C6F9F2',mid:'#5BD4C8'},{color:'#DCF9C6',mid:'#8ED45B'},
 ];
 const THEMES = [
-  {name:'핑크',emoji:'🌸',bg:'#FEF0F3',border:'#F7C5D0',dot:'#F9D8E0',text:'#C4647A',appBg:'#FDF7F9',accent:'#E8879A',accentBg:'#F9C6D0'},
-  {name:'노랑',emoji:'🌼',bg:'#FEFAE8',border:'#F5E9B0',dot:'#FAF0C0',text:'#B89830',appBg:'#FDFAF0',accent:'#E0B85B',accentBg:'#F9EAC6'},
-  {name:'하늘',emoji:'🫧',bg:'#EDF7FD',border:'#BDE4F5',dot:'#D0EEF9',text:'#5099BA',appBg:'#F0F8FD',accent:'#5BBEDD',accentBg:'#C6EFF9'},
-  {name:'보라',emoji:'🪻',bg:'#F3EFFE',border:'#D8C8F5',dot:'#E4D5F8',text:'#8B6CC4',appBg:'#F5F0FE',accent:'#9E7AE0',accentBg:'#D4C6F9'},
-  {name:'민트',emoji:'🌿',bg:'#EDFBF4',border:'#B8EDD5',dot:'#CCF0DF',text:'#3DA872',appBg:'#F0FDF6',accent:'#5BD4A0',accentBg:'#C6F9E0'},
-  {name:'그레이',emoji:'🩶',bg:'#F5F4F1',border:'#DDDBD4',dot:'#E8E6E0',text:'#888880',appBg:'#F5F4F1',accent:'#ABABAB',accentBg:'#E8E6E0'},
+  {emoji:'🌸',bg:'#FEF0F3',border:'#F7C5D0',dot:'#F9D8E0',text:'#C4647A',appBg:'#FDF7F9',accent:'#E8879A',accentBg:'#F9C6D0'},
+  {emoji:'🌼',bg:'#FEFAE8',border:'#F5E9B0',dot:'#FAF0C0',text:'#B89830',appBg:'#FDFAF0',accent:'#E0B85B',accentBg:'#F9EAC6'},
+  {emoji:'🫧',bg:'#EDF7FD',border:'#BDE4F5',dot:'#D0EEF9',text:'#5099BA',appBg:'#F0F8FD',accent:'#5BBEDD',accentBg:'#C6EFF9'},
+  {emoji:'🪻',bg:'#F3EFFE',border:'#D8C8F5',dot:'#E4D5F8',text:'#8B6CC4',appBg:'#F5F0FE',accent:'#9E7AE0',accentBg:'#D4C6F9'},
+  {emoji:'🌿',bg:'#EDFBF4',border:'#B8EDD5',dot:'#CCF0DF',text:'#3DA872',appBg:'#F0FDF6',accent:'#5BD4A0',accentBg:'#C6F9E0'},
+  {emoji:'🩶',bg:'#F5F4F1',border:'#DDDBD4',dot:'#E8E6E0',text:'#888880',appBg:'#F5F4F1',accent:'#ABABAB',accentBg:'#E8E6E0'},
 ];
 const DEFAULT_HABITS = [
   {id:'exercise',name:'운동/헬스',icon:'🏋️',color:'#F9C6D0',mid:'#E8879A'},
@@ -375,17 +484,99 @@ const today = new Date();
 let viewYear = today.getFullYear(), viewMonth = today.getMonth();
 let habits = [], records = {}, synced = false;
 let currentUser = null, isGuest = false, authMode = 'login';
-let appLang = 'ko', selTheme = 0;
-let profileData = { nickname:'', bio:'', avatarType:'emoji', avatarEmoji:'😊', avatarPhoto:'' };
-let tempAvEmoji = '😊', tempAvPhoto = '', tempAvType = 'emoji', tempTheme = 0;
+let appLang = localStorage.getItem('appLang') || 'ko';
+let selTheme = 0;
+let profileData = {nickname:'',bio:'',avatarType:'emoji',avatarEmoji:'😊',avatarPhoto:''};
+let tempAvEmoji='😊', tempAvPhoto='', tempAvType='emoji', tempTheme=0;
 
-// ── Theme apply ──
+function t() { return T[appLang]; }
+
+// ── Apply theme & lang ──
 function applyTheme(idx) {
-  const t = THEMES[idx];
-  document.documentElement.style.setProperty('--bg', t.appBg);
-  document.documentElement.style.setProperty('--accent', t.accent);
-  document.documentElement.style.setProperty('--accent-bg', t.accentBg);
+  const th = THEMES[idx];
+  document.documentElement.style.setProperty('--bg', th.appBg);
+  document.documentElement.style.setProperty('--accent', th.accent);
+  document.documentElement.style.setProperty('--accent-bg', th.accentBg);
 }
+
+function applyLang() {
+  const L = t();
+  // auth screen
+  document.getElementById('auth-sub-text').textContent = L.authSub;
+  document.getElementById('tab-login').textContent = L.login;
+  document.getElementById('tab-signup').textContent = authMode==='signup' ? L.signup : L.login;
+  document.getElementById('tab-login').textContent = L.login;
+  document.getElementById('tab-signup').textContent = L.signup;
+  document.getElementById('lbl-email').textContent = L.email;
+  document.getElementById('lbl-password').textContent = L.password;
+  document.getElementById('lbl-nickname').textContent = L.nickname;
+  document.getElementById('auth-email').placeholder = L.emailPh;
+  document.getElementById('auth-password').placeholder = L.passwordPh;
+  document.getElementById('auth-name').placeholder = L.nicknamePh;
+  document.getElementById('auth-submit-btn').textContent = authMode==='login' ? L.submitLogin : L.submitSignup;
+  document.getElementById('auth-or-text').textContent = L.or;
+  document.getElementById('auth-or-text2').textContent = L.or;
+  document.getElementById('btn-google-text').textContent = L.googleBtn;
+  document.getElementById('btn-guest-text').textContent = L.guestBtn;
+  document.getElementById('auth-hint-login').textContent = L.hintLogin;
+  document.getElementById('auth-hint-guest').textContent = L.hintGuest;
+  // auth lang buttons
+  document.getElementById('auth-lang-ko').classList.toggle('active', appLang==='ko');
+  document.getElementById('auth-lang-en').classList.toggle('active', appLang==='en');
+  // app
+  if (document.getElementById('btn-logout')) document.getElementById('btn-logout').textContent = L.logout;
+  // habit modal
+  document.getElementById('lbl-habit-name').textContent = L.habitName;
+  document.getElementById('lbl-habit-icon').textContent = L.habitIcon;
+  document.getElementById('lbl-habit-color').textContent = L.habitColor;
+  document.getElementById('modal-name').placeholder = L.habitNamePh;
+  document.getElementById('btn-habit-cancel').textContent = L.habitCancel;
+  document.getElementById('btn-habit-save').textContent = L.habitSave;
+  document.getElementById('btn-delete-habit').textContent = L.habitDelete;
+  // settings tabs
+  document.getElementById('stab-profile').textContent = L.stabProfile;
+  document.getElementById('stab-theme').textContent = L.stabTheme;
+  document.getElementById('stab-app').textContent = L.stabApp;
+  // settings profile
+  document.getElementById('lbl-s-nickname').textContent = L.sNickname;
+  document.getElementById('s-nickname').placeholder = L.sNicknamePh;
+  document.getElementById('lbl-s-bio').textContent = L.sBio;
+  document.getElementById('s-bio').placeholder = L.sBioPh;
+  document.getElementById('lbl-s-profileimg').textContent = L.sProfileImg;
+  document.getElementById('av-tab-emoji').textContent = L.avEmoji;
+  document.getElementById('av-tab-photo').textContent = L.avPhoto;
+  document.getElementById('lbl-upload-photo').textContent = L.uploadPhoto;
+  // settings theme
+  document.getElementById('lbl-theme-title').textContent = L.themeTitle;
+  document.getElementById('lbl-theme-preview').textContent = L.themePreview;
+  // settings app
+  document.getElementById('lbl-app-account').textContent = L.appAccount;
+  document.getElementById('lbl-app-lang').textContent = L.appLang;
+  document.getElementById('lbl-app-lang-name').textContent = L.appLangName;
+  document.getElementById('lbl-app-data').textContent = L.appData;
+  document.getElementById('lbl-reset-btn').textContent = L.resetBtn;
+  document.getElementById('lbl-reset-note').textContent = L.resetNote;
+  document.getElementById('btn-settings-cancel').textContent = L.settingsCancel;
+  document.getElementById('btn-settings-save').textContent = L.settingsSave;
+  // lang toggle in settings
+  document.getElementById('slang-ko').classList.toggle('active', appLang==='ko');
+  document.getElementById('slang-en').classList.toggle('active', appLang==='en');
+  updateAccountRow();
+  if (document.getElementById('habits-grid').innerHTML) render();
+}
+
+// ── Auth lang toggle ──
+window.setAuthLang = (lang) => {
+  appLang = lang;
+  localStorage.setItem('appLang', lang);
+  applyLang();
+};
+
+window.setAppLang = (lang, btn) => {
+  appLang = lang;
+  localStorage.setItem('appLang', lang);
+  applyLang();
+};
 
 // ── Auth ──
 window.switchTab = (mode) => {
@@ -393,19 +584,23 @@ window.switchTab = (mode) => {
   document.getElementById('tab-login').classList.toggle('active', mode==='login');
   document.getElementById('tab-signup').classList.toggle('active', mode==='signup');
   document.getElementById('field-name').style.display = mode==='signup' ? 'block' : 'none';
-  document.getElementById('auth-submit-btn').textContent = mode==='login' ? 'Log In' : 'Sign Up';
+  document.getElementById('auth-submit-btn').textContent = mode==='login' ? t().submitLogin : t().submitSignup;
   document.getElementById('auth-error').textContent = '';
 };
-const ERROR_MAP = {
-  'auth/invalid-email':'Please enter a valid email address.',
-  'auth/user-not-found':'No account found with this email.',
-  'auth/wrong-password':'Incorrect password.',
-  'auth/email-already-in-use':'This email is already in use.',
-  'auth/weak-password':'Password must be at least 6 characters.',
-  'auth/invalid-credential':'Incorrect email or password.',
-  'auth/popup-closed-by-user':'Sign-in popup was closed.',
-};
-function showAuthError(e) { document.getElementById('auth-error').textContent = ERROR_MAP[e.code] || 'Something went wrong.'; }
+
+function getAuthError(code) {
+  const L = t();
+  const map = {
+    'auth/invalid-email': L.errInvalidEmail,
+    'auth/user-not-found': L.errUserNotFound,
+    'auth/wrong-password': L.errWrongPassword,
+    'auth/email-already-in-use': L.errEmailInUse,
+    'auth/weak-password': L.errWeakPassword,
+    'auth/invalid-credential': L.errInvalidCred,
+    'auth/popup-closed-by-user': L.errPopupClosed,
+  };
+  return map[code] || L.errGeneral;
+}
 
 window.submitAuth = async () => {
   const email = document.getElementById('auth-email').value.trim();
@@ -415,23 +610,27 @@ window.submitAuth = async () => {
   try {
     if (authMode==='login') await signInWithEmailAndPassword(auth, email, pw);
     else { const c = await createUserWithEmailAndPassword(auth, email, pw); if(name) await updateProfile(c.user,{displayName:name}); }
-  } catch(e) { showAuthError(e); }
+  } catch(e) { document.getElementById('auth-error').textContent = getAuthError(e.code); }
 };
+
 window.loginWithGoogle = async () => {
   document.getElementById('auth-error').textContent = '';
-  try { await signInWithPopup(auth, googleProvider); } catch(e) { showAuthError(e); }
+  try { await signInWithPopup(auth, googleProvider); }
+  catch(e) { document.getElementById('auth-error').textContent = getAuthError(e.code); }
 };
+
 window.continueAsGuest = () => {
   isGuest = true; currentUser = null;
-  profileData = { nickname:'Guest', bio:'', avatarType:'emoji', avatarEmoji:'😊', avatarPhoto:'' };
+  profileData = {nickname:'Guest',bio:'',avatarType:'emoji',avatarEmoji:'😊',avatarPhoto:''};
   try { habits = JSON.parse(localStorage.getItem('guest_habits')||'null') || DEFAULT_HABITS; } catch(e) { habits = DEFAULT_HABITS; }
   try { records = JSON.parse(localStorage.getItem('guest_records')||'{}'); } catch(e) { records = {}; }
   try { selTheme = parseInt(localStorage.getItem('guest_theme')||'0'); } catch(e) { selTheme=0; }
   applyTheme(selTheme);
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app-wrap').style.display = 'block';
-  renderUserInfo(); render();
+  applyLang(); renderUserInfo(); render();
 };
+
 window.logout = async () => {
   if (isGuest) {
     isGuest = false; currentUser = null; habits = []; records = {};
@@ -447,10 +646,12 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('app-wrap').style.display = 'block';
     await loadProfile(); await loadFromFirebase();
+    applyLang();
   } else if (!isGuest) {
     currentUser = null;
     document.getElementById('auth-screen').style.display = 'flex';
     document.getElementById('app-wrap').style.display = 'none';
+    applyLang();
   }
 });
 
@@ -465,15 +666,15 @@ function setSyncStatus(ok) {
   const bar = document.getElementById('summary-bar');
   let el = bar.querySelector('.sync-status');
   if (!el) { el = document.createElement('div'); el.className='sync-status'; bar.appendChild(el); }
-  el.innerHTML = `<div class="sync-dot ${ok?'ok':'err'}"></div>${ok?'동기화됨':'오프라인'}`;
+  el.innerHTML = `<div class="sync-dot ${ok?'ok':'err'}"></div>${ok ? t().synced : t().offline}`;
 }
 
 async function loadProfile() {
   try {
     const [pSnap, sSnap] = await Promise.all([getDoc(profileRef()), getDoc(settingsRef())]);
     if (pSnap.exists()) profileData = {...profileData, ...pSnap.data()};
-    else { profileData.nickname = currentUser.displayName || currentUser.email.split('@')[0]; profileData.avatarEmoji = '😊'; }
-    if (sSnap.exists()) { selTheme = sSnap.data().theme || 0; appLang = sSnap.data().lang || 'ko'; }
+    else { profileData.nickname = currentUser.displayName || currentUser.email.split('@')[0]; profileData.avatarEmoji='😊'; }
+    if (sSnap.exists()) { selTheme = sSnap.data().theme||0; appLang = sSnap.data().lang||appLang; localStorage.setItem('appLang',appLang); }
   } catch(e) { profileData.nickname = currentUser.displayName || currentUser.email.split('@')[0]; }
   applyTheme(selTheme);
   renderUserInfo();
@@ -499,63 +700,64 @@ function recordKey(id,y,m,d) { return `${id}:${y}-${String(m+1).padStart(2,'0')}
 
 async function toggleDay(id,y,m,d) {
   if (isFuture(y,m,d)) return;
-  const k = recordKey(id,y,m,d), newVal = !records[k];
-  records[k] = newVal; render();
+  const k=recordKey(id,y,m,d), newVal=!records[k];
+  records[k]=newVal; render();
   if (isGuest) { localStorage.setItem('guest_records', JSON.stringify(records)); return; }
   try {
-    if (newVal) await setDoc(recordsRef(), {[k]: true}, {merge: true});
-    else await updateDoc(recordsRef(), {[k]: deleteField()});
+    if (newVal) await setDoc(recordsRef(),{[k]:true},{merge:true});
+    else await updateDoc(recordsRef(),{[k]:deleteField()});
     setSyncStatus(true);
   } catch(e) { setSyncStatus(false); }
 }
 window.toggleDay = toggleDay;
 
-// ── Helpers ──
 function isToday(y,m,d){return y===today.getFullYear()&&m===today.getMonth()&&d===today.getDate();}
 function isFuture(y,m,d){return new Date(y,m,d)>new Date(today.getFullYear(),today.getMonth(),today.getDate());}
 function daysInMonth(y,m){return new Date(y,m+1,0).getDate();}
+function firstDayOfMonth(y,m){return new Date(y,m,1).getDay();}
 function getStreak(id){let s=0,d=new Date(today.getFullYear(),today.getMonth(),today.getDate());while(records[recordKey(id,d.getFullYear(),d.getMonth(),d.getDate())]){s++;d.setDate(d.getDate()-1);}return s;}
-const monthNames=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 
-// ── Render ──
 function renderUserInfo() {
-  document.getElementById('user-name').textContent = profileData.nickname || 'User';
+  document.getElementById('user-name').textContent = profileData.nickname||'User';
   const av = document.getElementById('user-avatar');
-  if (profileData.avatarType==='photo' && profileData.avatarPhoto) av.innerHTML = `<img src="${profileData.avatarPhoto}" alt="">`;
-  else { av.textContent = profileData.avatarEmoji || '😊'; av.style.fontSize = '15px'; }
+  if (profileData.avatarType==='photo'&&profileData.avatarPhoto) av.innerHTML=`<img src="${profileData.avatarPhoto}" alt="">`;
+  else { av.textContent=profileData.avatarEmoji||'😊'; av.style.fontSize='15px'; }
 }
 
 function render() {
-  const isNow = viewYear===today.getFullYear() && viewMonth===today.getMonth();
+  const L = t();
+  const isNow = viewYear===today.getFullYear()&&viewMonth===today.getMonth();
   const dim = daysInMonth(viewYear, viewMonth);
-  const dayNames=['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
-  document.getElementById('today-label').textContent = `${today.getFullYear()}년 ${monthNames[today.getMonth()]} ${today.getDate()}일 ${dayNames[today.getDay()]}`;
-  document.getElementById('month-label').textContent = `${viewYear}년 ${monthNames[viewMonth]}`;
+  const fd = firstDayOfMonth(viewYear, viewMonth);
+  document.getElementById('today-label').textContent = L.today(today.getFullYear(), today.getMonth(), today.getDate(), today.getDay());
+  document.getElementById('month-label').textContent = `${viewYear} ${L.months[viewMonth]}`;
   const doneToday = isNow ? habits.filter(h=>records[recordKey(h.id,today.getFullYear(),today.getMonth(),today.getDate())]).length : 0;
-  const totalMonth = habits.reduce((s,h)=>{let c=0;for(let d=1;d<=daysInMonth(viewYear,viewMonth);d++)if(records[recordKey(h.id,viewYear,viewMonth,d)])c++;return s+c;},0);
+  const totalMonth = habits.reduce((s,h)=>{let c=0;for(let d=1;d<=dim;d++)if(records[recordKey(h.id,viewYear,viewMonth,d)])c++;return s+c;},0);
   const bar = document.getElementById('summary-bar');
   const syncEl = bar.querySelector('.sync-status');
   bar.innerHTML = isNow
-    ? `<div class="summary-pill">오늘 <strong>${doneToday}/${habits.length}</strong> 완료</div><div class="summary-pill">이번 달 누적 <strong>${totalMonth}</strong>회</div>`
-    : `<div class="summary-pill">${monthNames[viewMonth]} 누적 <strong>${totalMonth}</strong>회</div>`;
+    ? `<div class="summary-pill"><strong>${doneToday}/${habits.length}</strong> ${appLang==='ko'?'완료':'done today'}</div><div class="summary-pill">${L.monthTotal(totalMonth)}</div>`
+    : `<div class="summary-pill">${L.monthPastTotal(L.months[viewMonth], totalMonth)}</div>`;
   if (syncEl) bar.appendChild(syncEl);
-  else { const el=document.createElement('div');el.className='sync-status';el.innerHTML=`<div class="sync-dot ${synced?'ok':'err'}"></div>${synced?'동기화됨':'오프라인'}`;bar.appendChild(el); }
+  else { const el=document.createElement('div');el.className='sync-status';el.innerHTML=`<div class="sync-dot ${synced?'ok':'err'}"></div>${synced?L.synced:L.offline}`;bar.appendChild(el); }
+
   document.getElementById('habits-grid').innerHTML = habits.map(h=>{
-    let mc=0; for(let d=1;d<=daysInMonth(viewYear,viewMonth);d++) if(records[recordKey(h.id,viewYear,viewMonth,d)]) mc++;
+    let mc=0; for(let d=1;d<=dim;d++) if(records[recordKey(h.id,viewYear,viewMonth,d)]) mc++;
     const streak = isNow ? getStreak(h.id) : 0;
+    // 7-per-row grid: pad empty cells for the first week
     let dots='';
+    for(let i=0;i<fd;i++) dots+=`<div class="dot empty"></div>`;
     for(let d=1;d<=dim;d++){
       const done=records[recordKey(h.id,viewYear,viewMonth,d)];
       const cls=['dot',done?'checked':'',isToday(viewYear,viewMonth,d)?'today':'',isFuture(viewYear,viewMonth,d)?'future':''].filter(Boolean).join(' ');
-      dots+=`<button class="${cls}" style="${done?`background:${h.mid};`:''}" onclick="toggleDay('${h.id}',${viewYear},${viewMonth},${d})" ${isFuture(viewYear,viewMonth,d)?'disabled':''} title="${viewYear}년 ${viewMonth+1}월 ${d}일"></button>`;
+      dots+=`<button class="${cls}" style="${done?`background:${h.mid};`:''}" onclick="toggleDay('${h.id}',${viewYear},${viewMonth},${d})" ${isFuture(viewYear,viewMonth,d)?'disabled':''} title="${viewYear}/${viewMonth+1}/${d}"></button>`;
     }
     return `<div class="card"><div class="card-actions"><button class="card-action-btn" onclick="openEditModal('${h.id}')">✏️</button></div>
       <div class="card-header"><div class="card-icon" style="background:${h.color};">${h.icon}</div>
-      <div><div class="card-name">${h.name}</div><div class="card-count">${mc}회 완료</div></div></div>
-      <div class="cal-month">${viewYear}년 ${monthNames[viewMonth]}</div>
+      <div><div class="card-name">${h.name}</div><div class="card-count">${L.timesCompleted(mc)}</div></div></div>
       <div class="dot-grid">${dots}</div>
-      ${streak>1?`<div class="streak">🔥 ${streak}일 연속!</div>`:''}</div>`;
-  }).join('') + `<button class="card-add" onclick="openAddModal()"><div class="card-add-icon">+</div><span>습관 추가</span></button>`;
+      ${streak>1?`<div class="streak">${L.streak(streak)}</div>`:''}</div>`;
+  }).join('') + `<button class="card-add" onclick="openAddModal()"><div class="card-add-icon">+</div><span>${L.addHabit}</span></button>`;
 }
 window.render = render;
 
@@ -576,7 +778,7 @@ window.selHabitEmoji = e => { selEmoji=e; buildHabitSelectors(); };
 window.selHabitColor = i => { selColorIdx=i; buildHabitSelectors(); };
 window.openAddModal = () => {
   modalMode='add'; editingId=null; selEmoji=HABIT_EMOJIS[0]; selColorIdx=0;
-  document.getElementById('modal-title').textContent='새 습관 추가';
+  document.getElementById('modal-title').textContent = t().habitModalAdd;
   document.getElementById('modal-name').value='';
   document.getElementById('btn-delete-habit').style.display='none';
   buildHabitSelectors();
@@ -587,7 +789,7 @@ window.openEditModal = id => {
   const h=habits.find(x=>x.id===id); if(!h) return;
   modalMode='edit'; editingId=id; selEmoji=h.icon;
   selColorIdx=COLORS.findIndex(c=>c.color===h.color); if(selColorIdx<0) selColorIdx=0;
-  document.getElementById('modal-title').textContent='습관 수정';
+  document.getElementById('modal-title').textContent = t().habitModalEdit;
   document.getElementById('modal-name').value=h.name;
   document.getElementById('btn-delete-habit').style.display='block';
   buildHabitSelectors();
@@ -604,145 +806,111 @@ window.saveHabit = async () => {
   await saveHabitsToFirebase(); window.closeModal(); render();
 };
 window.deleteHabit = async () => {
-  if(!confirm('이 습관을 삭제할까요? 기록도 모두 사라져요.')) return;
+  if(!confirm(t().habitDeleteConfirm)) return;
   habits=habits.filter(h=>h.id!==editingId);
   await saveHabitsToFirebase(); window.closeModal(); render();
 };
 
 // ── Settings Modal ──
 window.openSettingsModal = (tab='profile') => {
-  tempAvEmoji = profileData.avatarEmoji||'😊';
-  tempAvPhoto = profileData.avatarPhoto||'';
-  tempAvType = profileData.avatarType||'emoji';
-  tempTheme = selTheme;
-  document.getElementById('s-nickname').value = profileData.nickname||'';
-  document.getElementById('s-bio').value = profileData.bio||'';
-  switchAvatarTab(tempAvType);
-  buildAvatarEmojiGrid();
-  buildThemeRows();
-  updateSettingsAvatarPreview();
-  updateAccountRow();
+  tempAvEmoji=profileData.avatarEmoji||'😊'; tempAvPhoto=profileData.avatarPhoto||''; tempAvType=profileData.avatarType||'emoji'; tempTheme=selTheme;
+  document.getElementById('s-nickname').value=profileData.nickname||'';
+  document.getElementById('s-bio').value=profileData.bio||'';
+  switchAvatarTab(tempAvType); buildAvatarEmojiGrid(); buildThemeRows(); updateSettingsAvatarPreview(); updateAccountRow();
   switchSettingsTab(tab);
   document.getElementById('settings-overlay').classList.add('open');
 };
 window.closeSettingsModal = () => document.getElementById('settings-overlay').classList.remove('open');
 window.closeSettingsOutside = e => { if(e.target===document.getElementById('settings-overlay')) window.closeSettingsModal(); };
-
 window.switchSettingsTab = (tab) => {
-  ['profile','theme','app'].forEach(t => {
-    document.getElementById(`s-panel-${t}`).classList.toggle('active', t===tab);
-    document.getElementById(`stab-${t}`).classList.toggle('active', t===tab);
+  ['profile','theme','app'].forEach(t2=>{
+    document.getElementById(`s-panel-${t2}`).classList.toggle('active',t2===tab);
+    document.getElementById(`stab-${t2}`).classList.toggle('active',t2===tab);
   });
 };
 
 function updateAccountRow() {
-  const nameEl = document.getElementById('s-account-name');
-  const descEl = document.getElementById('s-account-desc');
-  const rightEl = document.getElementById('s-account-right');
-  if (isGuest) { nameEl.textContent='로그인하기'; descEl.textContent='기기 간 동기화'; rightEl.textContent='→'; nameEl.style.color=''; }
-  else { nameEl.textContent='로그아웃'; descEl.textContent=currentUser?.email||''; rightEl.textContent=''; nameEl.style.color='#c0393a'; }
+  const L=t();
+  const nameEl=document.getElementById('s-account-name'), descEl=document.getElementById('s-account-desc'), rightEl=document.getElementById('s-account-right');
+  if(isGuest){nameEl.textContent=L.loginAction;descEl.textContent=L.loginDesc;rightEl.textContent='→';nameEl.style.color='';}
+  else{nameEl.textContent=L.logoutAction;descEl.textContent=currentUser?.email||'';rightEl.textContent='';nameEl.style.color='#c0393a';}
 }
 
 window.handleAccountAction = () => {
   window.closeSettingsModal();
-  if (isGuest) { document.getElementById('app-wrap').style.display='none'; document.getElementById('auth-screen').style.display='flex'; }
-  else { if(confirm('로그아웃 하시겠어요?')) window.logout(); }
+  if(isGuest){document.getElementById('app-wrap').style.display='none';document.getElementById('auth-screen').style.display='flex';}
+  else{if(confirm(t().logoutConfirm)) window.logout();}
 };
 
 window.switchAvatarTab = (type) => {
-  tempAvType = type;
-  document.getElementById('av-tab-emoji').classList.toggle('active', type==='emoji');
-  document.getElementById('av-tab-photo').classList.toggle('active', type==='photo');
-  document.getElementById('av-emoji-sec').style.display = type==='emoji' ? 'block' : 'none';
-  document.getElementById('av-photo-sec').style.display = type==='photo' ? 'block' : 'none';
+  tempAvType=type;
+  document.getElementById('av-tab-emoji').classList.toggle('active',type==='emoji');
+  document.getElementById('av-tab-photo').classList.toggle('active',type==='photo');
+  document.getElementById('av-emoji-sec').style.display=type==='emoji'?'block':'none';
+  document.getElementById('av-photo-sec').style.display=type==='photo'?'block':'none';
 };
 
 function buildAvatarEmojiGrid() {
   document.getElementById('avatar-emoji-grid').innerHTML = AVATAR_EMOJIS.map(e=>
-    `<button class="avatar-emoji-btn${e===tempAvEmoji?' selected':''}" onclick="selectAvatarEmoji('${e}')">${e}</button>`
-  ).join('');
+    `<button class="avatar-emoji-btn${e===tempAvEmoji?' selected':''}" onclick="selectAvatarEmoji('${e}')">${e}</button>`).join('');
 }
-
-window.selectAvatarEmoji = (e) => {
-  tempAvEmoji=e; tempAvType='emoji'; buildAvatarEmojiGrid(); updateSettingsAvatarPreview();
-};
-
+window.selectAvatarEmoji = (e) => { tempAvEmoji=e; tempAvType='emoji'; buildAvatarEmojiGrid(); updateSettingsAvatarPreview(); };
 window.handlePhotoUpload = (event) => {
   const file=event.target.files[0]; if(!file) return;
   const reader=new FileReader();
-  reader.onload=ev=>{tempAvPhoto=ev.target.result; tempAvType='photo'; updateSettingsAvatarPreview();};
+  reader.onload=ev=>{tempAvPhoto=ev.target.result;tempAvType='photo';updateSettingsAvatarPreview();};
   reader.readAsDataURL(file);
 };
-
 function updateSettingsAvatarPreview() {
   const prev=document.getElementById('s-avatar-preview');
   if(tempAvType==='photo'&&tempAvPhoto) prev.innerHTML=`<img src="${tempAvPhoto}" alt="">`;
-  else { prev.textContent=tempAvEmoji; prev.style.fontSize='32px'; }
+  else{prev.textContent=tempAvEmoji;prev.style.fontSize='32px';}
 }
 
 function buildThemeRows() {
-  document.getElementById('theme-rows').innerHTML = THEMES.map((t,i)=>`
+  const L=t();
+  document.getElementById('theme-rows').innerHTML = THEMES.map((th,i)=>`
     <div class="theme-row${i===tempTheme?' selected':''}" id="trow-${i}"
-      style="background:${t.bg};border-color:${i===tempTheme?t.border:'transparent'};"
+      style="background:${th.bg};border-color:${i===tempTheme?th.border:'transparent'};"
       onclick="selectTheme(${i})">
-      <div class="theme-dot-sm" style="background:${t.dot};">${t.emoji}</div>
-      <span style="color:${t.text};">${t.name}</span>
-      <span class="theme-check" style="color:${t.text};">✓</span>
+      <div class="theme-dot-sm" style="background:${th.dot};">${th.emoji}</div>
+      <span style="color:${th.text};">${L.themeNames[i]}</span>
+      <span class="theme-check" style="color:${th.text};">✓</span>
     </div>`).join('');
   renderThemePreview();
 }
-
 window.selectTheme = (i) => {
   tempTheme=i;
-  THEMES.forEach((_,j)=>{
-    const row=document.getElementById(`trow-${j}`);
-    row.classList.toggle('selected', j===i);
-    row.style.borderColor = j===i ? THEMES[j].border : 'transparent';
-    row.querySelector('.theme-check').style.opacity = j===i ? '1' : '0';
-  });
+  THEMES.forEach((_,j)=>{const row=document.getElementById(`trow-${j}`);row.classList.toggle('selected',j===i);row.style.borderColor=j===i?THEMES[j].border:'transparent';row.querySelector('.theme-check').style.opacity=j===i?'1':'0';});
   renderThemePreview();
 };
-
 function renderThemePreview() {
-  const t=THEMES[tempTheme];
+  const L=t();
   document.getElementById('theme-preview-chips').innerHTML =
-    [{name:'운동/헬스',c:'#F9C6D0',tc:'#A0435A'},{name:'독서',c:'#C6D9F9',tc:'#3A5FA0'},{name:'물 마시기',c:'#C6EFF9',tc:'#2E7E9E'}]
+    [{name:L.themeNames[0]||'핑크',c:'#F9C6D0',tc:'#A0435A'},{name:L.themeNames[2]||'하늘',c:'#C6EFF9',tc:'#2E7E9E'},{name:L.themeNames[4]||'민트',c:'#C6F9E0',tc:'#2E9E6A'}]
     .map(h=>`<div style="background:${h.c};color:${h.tc};border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;">${h.name}</div>`).join('');
 }
 
-window.setLang = (lang, btn) => {
-  appLang=lang;
-  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-};
-
 window.confirmReset = async () => {
-  if(!confirm('⚠️ 전체 기록 초기화\n\n모든 습관 기록이 삭제되며 되돌릴 수 없어요.\n정말 삭제하시겠어요?')) return;
-  records = {};
-  if(isGuest){ localStorage.removeItem('guest_records'); }
-  else { try { await setDoc(recordsRef(), {}); } catch(e){} }
+  if(!confirm(t().resetConfirm)) return;
+  records={};
+  if(isGuest) localStorage.removeItem('guest_records');
+  else { try{await setDoc(recordsRef(),{});}catch(e){} }
   window.closeSettingsModal(); render();
 };
 
 window.saveSettings = async () => {
-  const nickname = document.getElementById('s-nickname').value.trim()||'User';
-  const bio = document.getElementById('s-bio').value.trim();
-  profileData = { nickname, bio, avatarType:tempAvType, avatarEmoji:tempAvEmoji, avatarPhoto:tempAvPhoto };
-  selTheme = tempTheme;
-  applyTheme(selTheme);
-  renderUserInfo();
-  if(isGuest){
-    localStorage.setItem('guest_theme', String(selTheme));
-  } else {
-    try {
-      await Promise.all([
-        setDoc(profileRef(), profileData),
-        setDoc(settingsRef(), {theme:selTheme, lang:appLang})
-      ]);
-    } catch(e){}
-  }
+  const nickname=document.getElementById('s-nickname').value.trim()||'User';
+  const bio=document.getElementById('s-bio').value.trim();
+  profileData={nickname,bio,avatarType:tempAvType,avatarEmoji:tempAvEmoji,avatarPhoto:tempAvPhoto};
+  selTheme=tempTheme; applyTheme(selTheme); renderUserInfo(); applyLang();
+  if(isGuest){ localStorage.setItem('guest_theme',String(selTheme)); }
+  else { try{await Promise.all([setDoc(profileRef(),profileData),setDoc(settingsRef(),{theme:selTheme,lang:appLang})]);}catch(e){} }
   window.closeSettingsModal();
 };
+
+// ── Init ──
+applyLang();
 </script>
 </body>
 </html>

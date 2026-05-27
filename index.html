@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>습관 트래커 ✨</title>
+<title>Habit Tracker ✨</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root { --bg: #FDF7F9; --text: #3D2B35; --text-light: #9B8490; --card-bg: #FFFFFF; --border: rgba(180,140,160,0.15); }
   body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-  /* ── Auth Screen ── */
+  /* ── Auth ── */
   .auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
   .auth-box { background: white; border-radius: 24px; border: 1px solid var(--border); padding: 2.5rem 2rem; width: 100%; max-width: 380px; box-shadow: 0 4px 24px rgba(61,43,53,0.08); }
   .auth-title { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 4px; }
@@ -29,9 +29,13 @@
   .auth-divider hr { flex: 1; border: none; border-top: 1px solid var(--border); }
   .auth-divider span { font-size: 12px; color: var(--text-light); }
   .btn-google { width: 100%; padding: 10px; border-radius: 12px; border: 1px solid var(--border); background: white; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .btn-google:hover { background: var(--bg); border-color: rgba(180,140,160,0.4); }
+  .btn-google:hover { background: var(--bg); }
   .btn-google img { width: 18px; height: 18px; }
   .auth-error { font-size: 12px; color: #c0393a; text-align: center; margin-top: 10px; min-height: 18px; }
+  .btn-guest { width: 100%; padding: 10px; border-radius: 12px; border: 1.5px dashed rgba(180,140,160,0.4); background: transparent; color: var(--text-light); font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .btn-guest:hover { border-color: #E8879A; color: var(--text); background: #fdf5f7; }
+  .auth-hint { margin-top: 14px; display: flex; flex-direction: column; gap: 4px; }
+  .auth-hint span { font-size: 11px; color: var(--text-light); text-align: center; }
 
   /* ── App ── */
   .app-wrap { padding: 1.5rem 1rem 3rem; display: none; }
@@ -45,9 +49,14 @@
   .month-nav button { background: none; border: none; cursor: pointer; color: var(--text-light); font-size: 17px; line-height: 1; padding: 2px; border-radius: 50%; }
   .btn-logout { background: white; border: 1px solid var(--border); border-radius: 100px; padding: 5px 14px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 600; color: var(--text-light); cursor: pointer; transition: all 0.15s; }
   .btn-logout:hover { border-color: rgba(180,140,160,0.4); color: var(--text); }
-  .user-info { font-size: 12px; color: var(--text-light); display: flex; align-items: center; gap: 6px; }
-  .user-avatar { width: 24px; height: 24px; border-radius: 50%; background: #F9C6D0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #A0435A; overflow: hidden; }
+  .btn-settings { background: white; border: 1px solid var(--border); border-radius: 100px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; transition: all 0.15s; }
+  .btn-settings:hover { background: var(--bg); border-color: rgba(180,140,160,0.4); }
+  .user-info { display: flex; align-items: center; gap: 7px; cursor: pointer; }
+  .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: #F9C6D0; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #A0435A; overflow: hidden; flex-shrink: 0; border: 1.5px solid var(--border); }
   .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .user-name-text { font-size: 13px; font-weight: 600; color: var(--text); }
+
+  /* ── Summary ── */
   .summary-bar { max-width: 900px; margin: 0 auto 1rem; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
   .summary-pill { background: white; border: 1px solid var(--border); border-radius: 100px; padding: 4px 14px; font-size: 12px; color: var(--text-light); }
   .summary-pill strong { color: var(--text); }
@@ -55,6 +64,8 @@
   .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #ccc; }
   .sync-dot.ok { background: #5BD4A0; }
   .sync-dot.err { background: #E8879A; }
+
+  /* ── Grid & Cards ── */
   .grid { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   @media (max-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); } }
   .card { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); padding: 14px; transition: transform 0.15s; position: relative; }
@@ -66,7 +77,7 @@
   .card-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s; }
   .card:hover .card-actions { opacity: 1; }
   .card-action-btn { width: 22px; height: 22px; border-radius: 50%; border: none; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; background: rgba(180,140,160,0.12); color: var(--text-light); transition: all 0.15s; }
-  .card-action-btn:hover { background: rgba(180,140,160,0.28); color: var(--text); }
+  .card-action-btn:hover { background: rgba(180,140,160,0.28); }
   .cal-month { font-size: 10px; color: var(--text-light); font-weight: 700; letter-spacing: 0.04em; margin-bottom: 6px; }
   .dot-grid { display: flex; flex-wrap: wrap; gap: 4px; }
   .dot { width: 14px; height: 14px; border-radius: 50%; border: none; cursor: pointer; padding: 0; background: rgba(180,140,160,0.12); transition: all 0.15s; flex-shrink: 0; }
@@ -78,11 +89,14 @@
   .card-add:hover { border-color: rgba(180,140,160,0.6); background: #fdf2f5; }
   .card-add-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(180,140,160,0.12); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-light); }
   .card-add span { font-size: 12px; color: var(--text-light); font-weight: 600; }
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(61,43,53,0.35); z-index: 100; align-items: center; justify-content: center; }
+
+  /* ── Modals ── */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(61,43,53,0.35); z-index: 100; align-items: center; justify-content: center; padding: 1rem; }
   .modal-overlay.open { display: flex; }
-  .modal { background: white; border-radius: 20px; padding: 1.5rem; width: 360px; max-width: calc(100vw - 2rem); }
+  .modal { background: white; border-radius: 20px; padding: 1.5rem; width: 360px; max-width: 100%; max-height: 90vh; overflow-y: auto; }
   .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 1rem; color: var(--text); }
-  .modal label { font-size: 12px; font-weight: 600; color: var(--text-light); display: block; margin-bottom: 4px; margin-top: 12px; }
+  .modal label { font-size: 12px; font-weight: 600; color: var(--text-light); display: block; margin-bottom: 4px; margin-top: 14px; }
+  .modal label:first-of-type { margin-top: 0; }
   .modal input[type=text] { width: 100%; border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-family: 'Nunito', sans-serif; font-size: 13px; color: var(--text); outline: none; background: var(--bg); }
   .modal input[type=text]:focus { border-color: rgba(180,140,160,0.5); }
   .emoji-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
@@ -101,46 +115,56 @@
   .btn-save:hover { background: #d9708a; }
   .btn-delete-habit { width: 100%; margin-top: 10px; padding: 8px; border-radius: 10px; border: 1px solid #fde0e0; background: #fff5f5; color: #c0393a; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; }
   .btn-delete-habit:hover { background: #fde0e0; }
+
+  /* ── Profile Modal ── */
+  .profile-avatar-preview { width: 72px; height: 72px; border-radius: 50%; background: #F9C6D0; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 1rem; border: 2px solid var(--border); overflow: hidden; }
+  .profile-avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+  .avatar-type-tabs { display: flex; background: rgba(180,140,160,0.08); border-radius: 10px; padding: 3px; margin-bottom: 10px; }
+  .avatar-type-tabs button { flex: 1; padding: 6px; border: none; background: none; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 600; color: var(--text-light); cursor: pointer; transition: all 0.15s; }
+  .avatar-type-tabs button.active { background: white; color: var(--text); box-shadow: 0 1px 3px rgba(61,43,53,0.1); }
+  .avatar-emoji-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; max-height: 140px; overflow-y: auto; }
+  .avatar-emoji-btn { width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid transparent; background: rgba(180,140,160,0.08); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: all 0.12s; }
+  .avatar-emoji-btn:hover { background: rgba(180,140,160,0.2); }
+  .avatar-emoji-btn.selected { border-color: #E8879A; background: #fde8ef; }
+  .upload-area { border: 1.5px dashed rgba(180,140,160,0.4); border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s; margin-top: 4px; }
+  .upload-area:hover { border-color: #E8879A; background: #fdf5f7; }
+  .upload-area input { display: none; }
+  .upload-area p { font-size: 12px; color: var(--text-light); margin-top: 6px; }
   .loading-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-light); }
 </style>
 </head>
 <body>
 
-<!-- 로딩 -->
 <div class="loading-screen" id="loading-screen">불러오는 중... ✨</div>
 
-<!-- 로그인 화면 -->
+<!-- 로그인 -->
 <div class="auth-screen" id="auth-screen" style="display:none;">
   <div class="auth-box">
     <div class="auth-title">Habit Tracker <span>✨</span></div>
-    <div class="auth-sub">로그인하고 습관을 기록해보세요</div>
+    <div class="auth-sub">Track your habits, build your life</div>
     <div class="auth-tab">
-      <button class="active" id="tab-login" onclick="switchTab('login')">로그인</button>
-      <button id="tab-signup" onclick="switchTab('signup')">회원가입</button>
+      <button class="active" id="tab-login" onclick="switchTab('login')">Log In</button>
+      <button id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
     </div>
-    <div class="auth-field">
-      <label>이메일</label>
-      <input type="text" id="auth-email" placeholder="이메일 입력">
-    </div>
-    <div class="auth-field">
-      <label>비밀번호</label>
-      <input type="password" id="auth-password" placeholder="비밀번호 입력">
-    </div>
-    <div class="auth-field" id="field-name" style="display:none;">
-      <label>닉네임</label>
-      <input type="text" id="auth-name" placeholder="닉네임 입력">
-    </div>
-    <button class="btn-primary" id="auth-submit-btn" onclick="submitAuth()">로그인</button>
-    <div class="auth-divider"><hr><span>또는</span><hr></div>
+    <div class="auth-field"><label>Email</label><input type="text" id="auth-email" placeholder="Enter your email"></div>
+    <div class="auth-field"><label>Password</label><input type="password" id="auth-password" placeholder="Enter your password"></div>
+    <div class="auth-field" id="field-name" style="display:none;"><label>Nickname</label><input type="text" id="auth-name" placeholder="Enter your nickname"></div>
+    <button class="btn-primary" id="auth-submit-btn" onclick="submitAuth()">Log In</button>
+    <div class="auth-divider"><hr><span>or</span><hr></div>
     <button class="btn-google" onclick="loginWithGoogle()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
-      Google로 계속하기
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">Continue with Google
     </button>
+    <div class="auth-divider"><hr><span>or</span><hr></div>
+    <button class="btn-guest" onclick="continueAsGuest()">Continue without account</button>
+    <div class="auth-hint">
+      <span>🔄 Log in = syncs across all your devices</span>
+      <span>📱 Guest = saved on this device only</span>
+    </div>
     <div class="auth-error" id="auth-error"></div>
   </div>
 </div>
 
-<!-- 앱 본체 -->
+<!-- 앱 -->
 <div class="app-wrap" id="app-wrap">
   <div class="top-bar">
     <div>
@@ -148,23 +172,24 @@
       <div class="today-label" id="today-label"></div>
     </div>
     <div class="top-right">
-      <div class="user-info">
+      <div class="user-info" onclick="openProfileModal()">
         <div class="user-avatar" id="user-avatar"></div>
-        <span id="user-name"></span>
+        <span class="user-name-text" id="user-name"></span>
       </div>
       <div class="month-nav">
         <button onclick="changeMonth(-1)">&#8249;</button>
         <span id="month-label"></span>
         <button onclick="changeMonth(1)">&#8250;</button>
       </div>
-      <button class="btn-logout" onclick="logout()">로그아웃</button>
+      <button class="btn-settings" onclick="openProfileModal()" title="프로필 설정">⚙️</button>
+      <button class="btn-logout" onclick="logout()">Log Out</button>
     </div>
   </div>
   <div class="summary-bar" id="summary-bar"></div>
   <div class="grid" id="habits-grid"></div>
 </div>
 
-<!-- 습관 편집 모달 -->
+<!-- 습관 모달 -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
   <div class="modal">
     <div class="modal-title" id="modal-title">새 습관 추가</div>
@@ -179,6 +204,35 @@
       <button class="btn-save" onclick="saveHabit()">저장</button>
     </div>
     <button class="btn-delete-habit" id="btn-delete-habit" onclick="deleteHabit()" style="display:none;">이 습관 삭제하기</button>
+  </div>
+</div>
+
+<!-- 프로필 모달 -->
+<div class="modal-overlay" id="profile-modal-overlay" onclick="closeProfileModalOutside(event)">
+  <div class="modal">
+    <div class="modal-title">프로필 설정</div>
+    <div class="profile-avatar-preview" id="profile-preview"></div>
+    <label>닉네임</label>
+    <input type="text" id="profile-nickname" placeholder="닉네임 입력" maxlength="16">
+    <label>프로필 이미지</label>
+    <div class="avatar-type-tabs">
+      <button class="active" id="avatar-tab-emoji" onclick="switchAvatarTab('emoji')">이모지</button>
+      <button id="avatar-tab-photo" onclick="switchAvatarTab('photo')">사진 업로드</button>
+    </div>
+    <div id="avatar-emoji-section">
+      <div class="avatar-emoji-grid" id="avatar-emoji-grid"></div>
+    </div>
+    <div id="avatar-photo-section" style="display:none;">
+      <div class="upload-area" onclick="document.getElementById('photo-input').click()">
+        <div style="font-size:28px;">📷</div>
+        <p>클릭해서 사진 선택</p>
+        <input type="file" id="photo-input" accept="image/*" onchange="handlePhotoUpload(event)">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeProfileModal()">취소</button>
+      <button class="btn-save" onclick="saveProfile()">저장</button>
+    </div>
   </div>
 </div>
 
@@ -202,6 +256,7 @@ const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
 const EMOJIS = ['🏋️','📚','💧','🌙','✏️','🌿','🧘','🎨','🎵','🏃','🥗','😴','💊','🧹','💰','🐶','🚴','🤸','📝','🌅','🍎','🧠','💪','🫁'];
+const AVATAR_EMOJIS = ['😊','😎','🥰','🤩','😄','🐱','🐶','🦊','🐼','🐨','🐸','🦁','🐯','🐻','🐺','🦄','🐙','🌸','⭐','🌈','🍀','🎀','💎','🔥','🌙','☀️','🍓','🍭','🎵','🎨'];
 const COLORS = [
   {color:'#F9C6D0',mid:'#E8879A'},{color:'#C6D9F9',mid:'#7AAAE0'},{color:'#C6EFF9',mid:'#5BBEDD'},
   {color:'#D4C6F9',mid:'#9E7AE0'},{color:'#F9EAC6',mid:'#E0B85B'},{color:'#C6F9E0',mid:'#5BD4A0'},
@@ -219,35 +274,31 @@ const DEFAULT_HABITS = [
 const today = new Date();
 let viewYear = today.getFullYear();
 let viewMonth = today.getMonth();
-let habits = [];
-let records = {};
-let synced = false;
-let currentUser = null;
-let authMode = 'login';
+let habits = [], records = {}, isGuest = false;
+let synced = false, currentUser = null, authMode = 'login';
+let profileData = { nickname: '', avatarType: 'emoji', avatarEmoji: '😊', avatarPhoto: '' };
+let tempAvatarEmoji = '😊', tempAvatarPhoto = '', tempAvatarType = 'emoji';
 
-// ── Auth UI ──
+// ── Auth ──
 window.switchTab = (mode) => {
   authMode = mode;
   document.getElementById('tab-login').classList.toggle('active', mode==='login');
   document.getElementById('tab-signup').classList.toggle('active', mode==='signup');
   document.getElementById('field-name').style.display = mode==='signup' ? 'block' : 'none';
-  document.getElementById('auth-submit-btn').textContent = mode==='login' ? '로그인' : '회원가입';
+  document.getElementById('auth-submit-btn').textContent = mode==='login' ? 'Log In' : 'Sign Up';
   document.getElementById('auth-error').textContent = '';
 };
 
 const ERROR_MAP = {
-  'auth/invalid-email': '이메일 형식이 올바르지 않아요.',
-  'auth/user-not-found': '등록된 이메일이 없어요.',
-  'auth/wrong-password': '비밀번호가 틀렸어요.',
-  'auth/email-already-in-use': '이미 사용 중인 이메일이에요.',
-  'auth/weak-password': '비밀번호는 6자 이상이어야 해요.',
-  'auth/invalid-credential': '이메일 또는 비밀번호가 틀렸어요.',
-  'auth/popup-closed-by-user': '로그인 창이 닫혔어요. 다시 시도해주세요.',
+  'auth/invalid-email':'Please enter a valid email address.',
+  'auth/user-not-found':'No account found with this email.',
+  'auth/wrong-password':'Incorrect password. Please try again.',
+  'auth/email-already-in-use':'This email is already in use.',
+  'auth/weak-password':'Password must be at least 6 characters.',
+  'auth/invalid-credential':'Incorrect email or password.',
+  'auth/popup-closed-by-user':'Sign-in popup was closed. Please try again.',
 };
-
-function showError(e) {
-  document.getElementById('auth-error').textContent = ERROR_MAP[e.code] || '오류가 발생했어요. 다시 시도해주세요.';
-}
+function showAuthError(e) { document.getElementById('auth-error').textContent = ERROR_MAP[e.code] || 'Something went wrong. Please try again.'; }
 
 window.submitAuth = async () => {
   const email = document.getElementById('auth-email').value.trim();
@@ -255,41 +306,46 @@ window.submitAuth = async () => {
   const name = document.getElementById('auth-name').value.trim();
   document.getElementById('auth-error').textContent = '';
   try {
-    if (authMode === 'login') {
-      await signInWithEmailAndPassword(auth, email, password);
-    } else {
-      const cred = await createUserWithEmailAndPassword(auth, email, password);
-      if (name) await updateProfile(cred.user, { displayName: name });
-    }
-  } catch(e) { showError(e); }
+    if (authMode === 'login') { await signInWithEmailAndPassword(auth, email, password); }
+    else { const c = await createUserWithEmailAndPassword(auth, email, password); if(name) await updateProfile(c.user, {displayName: name}); }
+  } catch(e) { showAuthError(e); }
 };
-
 window.loginWithGoogle = async () => {
   document.getElementById('auth-error').textContent = '';
-  try { await signInWithPopup(auth, googleProvider); }
-  catch(e) { showError(e); }
+  try { await signInWithPopup(auth, googleProvider); } catch(e) { showAuthError(e); }
 };
-
 window.logout = async () => {
-  await signOut(auth);
+  if (isGuest) {
+    isGuest = false;
+    currentUser = null;
+    habits = []; records = {};
+    document.getElementById('app-wrap').style.display = 'none';
+    document.getElementById('auth-screen').style.display = 'flex';
+  } else {
+    await signOut(auth);
+  }
 };
 
-// ── Auth State ──
+window.continueAsGuest = () => {
+  isGuest = true;
+  currentUser = null;
+  profileData = { nickname: 'Guest', avatarType: 'emoji', avatarEmoji: '😊', avatarPhoto: '' };
+  // load from localStorage
+  try { habits = JSON.parse(localStorage.getItem('guest_habits') || 'null') || DEFAULT_HABITS; } catch(e) { habits = DEFAULT_HABITS; }
+  try { records = JSON.parse(localStorage.getItem('guest_records') || '{}'); } catch(e) { records = {}; }
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app-wrap').style.display = 'block';
+  renderUserInfo();
+  render();
+};
+
 onAuthStateChanged(auth, async (user) => {
   document.getElementById('loading-screen').style.display = 'none';
   if (user) {
     currentUser = user;
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('app-wrap').style.display = 'block';
-    // 유저 정보 표시
-    const name = user.displayName || user.email.split('@')[0];
-    document.getElementById('user-name').textContent = name;
-    const avatarEl = document.getElementById('user-avatar');
-    if (user.photoURL) {
-      avatarEl.innerHTML = `<img src="${user.photoURL}" alt="">`;
-    } else {
-      avatarEl.textContent = name[0].toUpperCase();
-    }
+    await loadProfile();
     await loadFromFirebase();
   } else {
     currentUser = null;
@@ -297,6 +353,99 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById('app-wrap').style.display = 'none';
   }
 });
+
+// ── Profile ──
+const profileRef = () => doc(db, "users", currentUser.uid, "data", "profile");
+
+async function loadProfile() {
+  try {
+    const snap = await getDoc(profileRef());
+    if (snap.exists()) profileData = { ...profileData, ...snap.data() };
+    else {
+      const fallbackName = currentUser.displayName || currentUser.email.split('@')[0];
+      profileData.nickname = fallbackName;
+      profileData.avatarEmoji = '😊';
+    }
+  } catch(e) {
+    profileData.nickname = currentUser.displayName || currentUser.email.split('@')[0];
+  }
+  renderUserInfo();
+}
+
+function renderUserInfo() {
+  document.getElementById('user-name').textContent = profileData.nickname || '사용자';
+  const av = document.getElementById('user-avatar');
+  if (profileData.avatarType === 'photo' && profileData.avatarPhoto) {
+    av.innerHTML = `<img src="${profileData.avatarPhoto}" alt="">`;
+  } else {
+    av.textContent = profileData.avatarEmoji || '😊';
+    av.style.fontSize = '16px';
+  }
+}
+
+window.openProfileModal = () => {
+  tempAvatarEmoji = profileData.avatarEmoji || '😊';
+  tempAvatarPhoto = profileData.avatarPhoto || '';
+  tempAvatarType = profileData.avatarType || 'emoji';
+  document.getElementById('profile-nickname').value = profileData.nickname || '';
+  switchAvatarTab(tempAvatarType);
+  updateProfilePreview();
+  buildAvatarEmojiGrid();
+  document.getElementById('profile-modal-overlay').classList.add('open');
+};
+window.closeProfileModal = () => document.getElementById('profile-modal-overlay').classList.remove('open');
+window.closeProfileModalOutside = (e) => { if(e.target===document.getElementById('profile-modal-overlay')) window.closeProfileModal(); };
+
+window.switchAvatarTab = (type) => {
+  tempAvatarType = type;
+  document.getElementById('avatar-tab-emoji').classList.toggle('active', type==='emoji');
+  document.getElementById('avatar-tab-photo').classList.toggle('active', type==='photo');
+  document.getElementById('avatar-emoji-section').style.display = type==='emoji' ? 'block' : 'none';
+  document.getElementById('avatar-photo-section').style.display = type==='photo' ? 'block' : 'none';
+  updateProfilePreview();
+};
+
+function buildAvatarEmojiGrid() {
+  document.getElementById('avatar-emoji-grid').innerHTML = AVATAR_EMOJIS.map(e =>
+    `<button class="avatar-emoji-btn${e===tempAvatarEmoji?' selected':''}" onclick="selectAvatarEmoji('${e}')">${e}</button>`
+  ).join('');
+}
+
+window.selectAvatarEmoji = (e) => {
+  tempAvatarEmoji = e; tempAvatarType = 'emoji';
+  buildAvatarEmojiGrid();
+  updateProfilePreview();
+};
+
+window.handlePhotoUpload = (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    tempAvatarPhoto = e.target.result;
+    tempAvatarType = 'photo';
+    updateProfilePreview();
+  };
+  reader.readAsDataURL(file);
+};
+
+function updateProfilePreview() {
+  const prev = document.getElementById('profile-preview');
+  if (tempAvatarType === 'photo' && tempAvatarPhoto) {
+    prev.innerHTML = `<img src="${tempAvatarPhoto}" alt="" style="width:100%;height:100%;object-fit:cover;">`;
+  } else {
+    prev.textContent = tempAvatarEmoji;
+    prev.style.fontSize = '36px';
+  }
+}
+
+window.saveProfile = async () => {
+  const nickname = document.getElementById('profile-nickname').value.trim() || '사용자';
+  profileData = { nickname, avatarType: tempAvatarType, avatarEmoji: tempAvatarEmoji, avatarPhoto: tempAvatarPhoto };
+  try { await setDoc(profileRef(), profileData); } catch(e) {}
+  renderUserInfo();
+  window.closeProfileModal();
+};
 
 // ── Firebase Data ──
 const habitsRef = () => doc(db, "users", currentUser.uid, "data", "habits");
@@ -317,26 +466,22 @@ async function loadFromFirebase() {
     else { habits = DEFAULT_HABITS; await setDoc(habitsRef(), {list: habits}); }
     records = rSnap.exists() ? (rSnap.data() || {}) : {};
     setSyncStatus(true);
-  } catch(e) {
-    habits = DEFAULT_HABITS; records = {};
-    setSyncStatus(false);
-  }
+  } catch(e) { habits = DEFAULT_HABITS; records = {}; setSyncStatus(false); }
   render();
 }
 
 async function saveHabitsToFirebase() {
-  try { await setDoc(habitsRef(), {list: habits}); setSyncStatus(true); }
-  catch(e) { setSyncStatus(false); }
+  if (isGuest) { localStorage.setItem('guest_habits', JSON.stringify(habits)); return; }
+  try { await setDoc(habitsRef(), {list: habits}); setSyncStatus(true); } catch(e) { setSyncStatus(false); }
 }
 
 function recordKey(id,y,m,d) { return `${id}:${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
 
 async function toggleDay(id,y,m,d) {
   if (isFuture(y,m,d)) return;
-  const k = recordKey(id,y,m,d);
-  const newVal = !records[k];
-  records[k] = newVal;
-  render();
+  const k = recordKey(id,y,m,d), newVal = !records[k];
+  records[k] = newVal; render();
+  if (isGuest) { localStorage.setItem('guest_records', JSON.stringify(records)); return; }
   try {
     if (newVal) await setDoc(recordsRef(), {[k]: true}, {merge: true});
     else await updateDoc(recordsRef(), {[k]: deleteField()});
@@ -345,7 +490,6 @@ async function toggleDay(id,y,m,d) {
 }
 window.toggleDay = toggleDay;
 
-// ── Helpers ──
 function isToday(y,m,d){return y===today.getFullYear()&&m===today.getMonth()&&d===today.getDate();}
 function isFuture(y,m,d){return new Date(y,m,d)>new Date(today.getFullYear(),today.getMonth(),today.getDate());}
 function daysInMonth(y,m){return new Date(y,m+1,0).getDate();}
@@ -354,10 +498,8 @@ function getStreak(id){
   while(records[recordKey(id,d.getFullYear(),d.getMonth(),d.getDate())]){s++;d.setDate(d.getDate()-1);}
   return s;
 }
-
 const monthNames=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 
-// ── Render ──
 function render() {
   const isNow=viewYear===today.getFullYear()&&viewMonth===today.getMonth();
   const dim=daysInMonth(viewYear,viewMonth);
@@ -365,36 +507,27 @@ function render() {
   document.getElementById('today-label').textContent=`${today.getFullYear()}년 ${monthNames[today.getMonth()]} ${today.getDate()}일 ${dayNames[today.getDay()]}`;
   document.getElementById('month-label').textContent=`${viewYear}년 ${monthNames[viewMonth]}`;
   const doneToday=isNow?habits.filter(h=>records[recordKey(h.id,today.getFullYear(),today.getMonth(),today.getDate())]).length:0;
-  const totalMonth=habits.reduce((s,h)=>{
-    let cnt=0; for(let d=1;d<=daysInMonth(viewYear,viewMonth);d++) if(records[recordKey(h.id,viewYear,viewMonth,d)]) cnt++;
-    return s+cnt;
-  },0);
+  const totalMonth=habits.reduce((s,h)=>{let c=0;for(let d=1;d<=daysInMonth(viewYear,viewMonth);d++)if(records[recordKey(h.id,viewYear,viewMonth,d)])c++;return s+c;},0);
   const bar=document.getElementById('summary-bar');
   const syncEl=bar.querySelector('.sync-status');
   bar.innerHTML=isNow
     ?`<div class="summary-pill">오늘 <strong>${doneToday}/${habits.length}</strong> 완료</div><div class="summary-pill">이번 달 누적 <strong>${totalMonth}</strong>회</div>`
     :`<div class="summary-pill">${monthNames[viewMonth]} 누적 <strong>${totalMonth}</strong>회</div>`;
   if(syncEl) bar.appendChild(syncEl);
-  else { const el=document.createElement('div'); el.className='sync-status'; el.innerHTML=`<div class="sync-dot ${synced?'ok':'err'}"></div>${synced?'동기화됨':'오프라인'}`; bar.appendChild(el); }
-
+  else{const el=document.createElement('div');el.className='sync-status';el.innerHTML=`<div class="sync-dot ${synced?'ok':'err'}"></div>${synced?'동기화됨':'오프라인'}`;bar.appendChild(el);}
   document.getElementById('habits-grid').innerHTML=habits.map(h=>{
-    let monthCount=0;
-    for(let d=1;d<=daysInMonth(viewYear,viewMonth);d++) if(records[recordKey(h.id,viewYear,viewMonth,d)]) monthCount++;
+    let mc=0;for(let d=1;d<=daysInMonth(viewYear,viewMonth);d++)if(records[recordKey(h.id,viewYear,viewMonth,d)])mc++;
     const streak=isNow?getStreak(h.id):0;
     let dots='';
     for(let d=1;d<=dim;d++){
       const done=records[recordKey(h.id,viewYear,viewMonth,d)];
       const cls=['dot',done?'checked':'',isToday(viewYear,viewMonth,d)?'today':'',isFuture(viewYear,viewMonth,d)?'future':''].filter(Boolean).join(' ');
-      const bg=done?`background:${h.mid};`:'';
-      const dis=isFuture(viewYear,viewMonth,d)?'disabled':'';
-      dots+=`<button class="${cls}" style="${bg}" onclick="toggleDay('${h.id}',${viewYear},${viewMonth},${d})" ${dis} title="${viewYear}년 ${viewMonth+1}월 ${d}일"></button>`;
+      dots+=`<button class="${cls}" style="${done?`background:${h.mid};`:''}" onclick="toggleDay('${h.id}',${viewYear},${viewMonth},${d})" ${isFuture(viewYear,viewMonth,d)?'disabled':''} title="${viewYear}년 ${viewMonth+1}월 ${d}일"></button>`;
     }
     return `<div class="card">
-      <div class="card-actions"><button class="card-action-btn" onclick="openEditModal('${h.id}')" title="수정">✏️</button></div>
-      <div class="card-header">
-        <div class="card-icon" style="background:${h.color};">${h.icon}</div>
-        <div><div class="card-name">${h.name}</div><div class="card-count">${monthCount}회 완료</div></div>
-      </div>
+      <div class="card-actions"><button class="card-action-btn" onclick="openEditModal('${h.id}')">✏️</button></div>
+      <div class="card-header"><div class="card-icon" style="background:${h.color};">${h.icon}</div>
+      <div><div class="card-name">${h.name}</div><div class="card-count">${mc}회 완료</div></div></div>
       <div class="cal-month">${viewYear}년 ${monthNames[viewMonth]}</div>
       <div class="dot-grid">${dots}</div>
       ${streak>1?`<div class="streak">🔥 ${streak}일 연속!</div>`:''}
@@ -410,16 +543,14 @@ window.changeMonth = (dir) => {
   render();
 };
 
-// ── Modal ──
+// ── Habit Modal ──
 let modalMode='add', editingId=null, selectedEmoji=EMOJIS[0], selectedColorIdx=0;
-
 function buildModalSelectors(){
   document.getElementById('emoji-grid').innerHTML=EMOJIS.map(e=>`<button class="emoji-btn${e===selectedEmoji?' selected':''}" onclick="selectEmoji('${e}')">${e}</button>`).join('');
   document.getElementById('color-grid').innerHTML=COLORS.map((c,i)=>`<button class="color-btn${i===selectedColorIdx?' selected':''}" style="background:${c.color};" onclick="selectColor(${i})"></button>`).join('');
 }
 window.selectEmoji = e => { selectedEmoji=e; buildModalSelectors(); };
 window.selectColor = i => { selectedColorIdx=i; buildModalSelectors(); };
-
 window.openAddModal = () => {
   modalMode='add'; editingId=null; selectedEmoji=EMOJIS[0]; selectedColorIdx=0;
   document.getElementById('modal-title').textContent='새 습관 추가';
@@ -429,7 +560,6 @@ window.openAddModal = () => {
   document.getElementById('modal-overlay').classList.add('open');
   setTimeout(()=>document.getElementById('modal-name').focus(),100);
 };
-
 window.openEditModal = id => {
   const h=habits.find(x=>x.id===id); if(!h) return;
   modalMode='edit'; editingId=id; selectedEmoji=h.icon;
@@ -441,24 +571,17 @@ window.openEditModal = id => {
   document.getElementById('modal-overlay').classList.add('open');
   setTimeout(()=>document.getElementById('modal-name').focus(),100);
 };
-
 window.closeModal = () => document.getElementById('modal-overlay').classList.remove('open');
 window.closeModalOutside = e => { if(e.target===document.getElementById('modal-overlay')) window.closeModal(); };
-
 window.saveHabit = async () => {
   const name=document.getElementById('modal-name').value.trim();
   if(!name){document.getElementById('modal-name').focus();return;}
   const c=COLORS[selectedColorIdx];
-  if(modalMode==='add'){
-    habits.push({id:'h'+Date.now(),name,icon:selectedEmoji,color:c.color,mid:c.mid});
-  } else {
-    const h=habits.find(x=>x.id===editingId);
-    if(h){h.name=name;h.icon=selectedEmoji;h.color=c.color;h.mid=c.mid;}
-  }
+  if(modalMode==='add') habits.push({id:'h'+Date.now(),name,icon:selectedEmoji,color:c.color,mid:c.mid});
+  else { const h=habits.find(x=>x.id===editingId); if(h){h.name=name;h.icon=selectedEmoji;h.color=c.color;h.mid=c.mid;} }
   await saveHabitsToFirebase();
   window.closeModal(); render();
 };
-
 window.deleteHabit = async () => {
   if(!confirm('이 습관을 삭제할까요? 기록도 모두 사라져요.')) return;
   habits=habits.filter(h=>h.id!==editingId);

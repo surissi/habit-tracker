@@ -85,8 +85,8 @@ body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--te
 .card-action-btn { width: 22px; height: 22px; border-radius: 50%; border: none; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; background: rgba(180,140,160,0.12); color: var(--text-light); transition: all 0.15s; }
 .card-action-btn:hover { background: rgba(180,140,160,0.28); }
 /* 7-per-row dot grid */
-.dot-grid { display: grid; grid-template-columns: repeat(7, 14px); gap: 4px; }
-.dot { width: 14px; height: 14px; border-radius: 50%; border: none; cursor: pointer; padding: 0; background: rgba(180,140,160,0.12); transition: all 0.15s; }
+.dot-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+.dot { width: 100%; aspect-ratio: 1; border-radius: 50%; border: none; cursor: pointer; padding: 0; background: rgba(180,140,160,0.12); transition: all 0.15s; }
 .dot:hover:not(.future) { background: rgba(180,140,160,0.28); }
 .dot.today { box-shadow: 0 0 0 2px rgba(180,140,160,0.45); }
 .dot.future { opacity: 0.3; cursor: default; }
@@ -226,6 +226,10 @@ body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--te
         <button onclick="changeMonth(1)">&#8250;</button>
       </div>
       <button class="btn-settings" onclick="openSettingsModal('profile')" title="Settings">⚙️</button>
+      <div class="auth-lang-toggle" style="margin:0;">
+        <button class="auth-lang-btn" id="app-lang-ko" onclick="setAuthLang('ko')">한국어</button>
+        <button class="auth-lang-btn" id="app-lang-en" onclick="setAuthLang('en')">EN</button>
+      </div>
       <button class="btn-logout" id="btn-logout" onclick="logout()"></button>
     </div>
   </div>
@@ -285,8 +289,7 @@ body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--te
       <div class="s-panel" id="s-panel-theme">
         <div class="s-label" id="lbl-theme-title" style="margin-top:0;"></div>
         <div id="theme-rows"></div>
-        <div class="s-label" id="lbl-theme-preview"></div>
-        <div id="theme-preview-chips" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;"></div>
+
       </div>
       <!-- 앱 설정 -->
       <div class="s-panel" id="s-panel-app">
@@ -298,17 +301,7 @@ body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--te
           </div>
           <div class="app-row-right" id="s-account-right">→</div>
         </div>
-        <div class="s-label" id="lbl-app-lang"></div>
-        <div class="app-row" style="cursor:default;">
-          <div class="app-row-left">
-            <span style="font-size:16px;">🌐</span>
-            <div class="app-row-name" id="lbl-app-lang-name"></div>
-          </div>
-          <div class="lang-toggle">
-            <button class="lang-btn active" id="slang-ko" onclick="setAppLang('ko',this)">한국어</button>
-            <button class="lang-btn" id="slang-en" onclick="setAppLang('en',this)">English</button>
-          </div>
-        </div>
+
         <div class="s-label" id="lbl-app-data"></div>
         <div class="app-row danger-border" onclick="confirmReset()">
           <div class="app-row-left">
@@ -349,6 +342,14 @@ const googleProvider = new GoogleAuthProvider();
 const T = {
   ko: {
     loading: '불러오는 중... ✨',
+    defaultHabits: [
+      {id:'exercise',name:'운동/헬스',icon:'🏋️',color:'#F9C6D0',mid:'#E8879A'},
+      {id:'reading',name:'독서',icon:'📚',color:'#C6D9F9',mid:'#7AAAE0'},
+      {id:'water',name:'물 마시기',icon:'💧',color:'#C6EFF9',mid:'#5BBEDD'},
+      {id:'sleep',name:'수면',icon:'🌙',color:'#D4C6F9',mid:'#9E7AE0'},
+      {id:'study',name:'공부',icon:'✏️',color:'#F9EAC6',mid:'#E0B85B'},
+      {id:'meditation',name:'명상/마음챙김',icon:'🌿',color:'#C6F9E0',mid:'#5BD4A0'},
+    ],
     authSub: '로그인하고 습관을 기록해보세요',
     login: '로그인', signup: '회원가입',
     email: '이메일', password: '비밀번호', nickname: '닉네임',
@@ -402,6 +403,14 @@ const T = {
   },
   en: {
     loading: 'Loading... ✨',
+    defaultHabits: [
+      {id:'exercise',name:'Workout',icon:'🏋️',color:'#F9C6D0',mid:'#E8879A'},
+      {id:'reading',name:'Reading',icon:'📚',color:'#C6D9F9',mid:'#7AAAE0'},
+      {id:'water',name:'Drink Water',icon:'💧',color:'#C6EFF9',mid:'#5BBEDD'},
+      {id:'sleep',name:'Sleep',icon:'🌙',color:'#D4C6F9',mid:'#9E7AE0'},
+      {id:'study',name:'Study',icon:'✏️',color:'#F9EAC6',mid:'#E0B85B'},
+      {id:'meditation',name:'Meditation',icon:'🌿',color:'#C6F9E0',mid:'#5BD4A0'},
+    ],
     authSub: 'Track your habits, build your life.',
     login: 'Log In', signup: 'Sign Up',
     email: 'Email', password: 'Password', nickname: 'Nickname',
@@ -455,12 +464,15 @@ const T = {
   }
 };
 
-const HABIT_EMOJIS = ['🏋️','📚','💧','🌙','✏️','🌿','🧘','🎨','🎵','🏃','🥗','😴','💊','🧹','💰','🐶','🚴','🤸','📝','🌅','🍎','🧠','💪','🫁'];
+const HABIT_EMOJIS = ['🐱','🐶','🐼','🐨','🦊','🐰','🦁','🐯','🐸','🐙','🦋','🐝','🌸','🌺','🌻','🌹','🍀','🌿','🪴','🌵','🍃','🌾','🌙','⭐','☀️','🌈','⚡','🔥','❄️','🌊','🍎','🍊','🍋','🍇','🍓','🍑','🥝','🍵','☕','🧋','🥤','🫖','🍳','🥗','🥑','🍱','🏃','🏋️','🤸','🧘','🚴','🏊','🧗','🤾','🎯','⚽','🏀','🎾','⚾','🏐','🎮','🧩','🎲','🎨','🎵','🎧','🎤','🎹','🎸','🎻','📚','📖','✏️','📝','💡','🔬','🧪','📊','💻','📱','📷','🎬','✈️','🏕️','🌍','🗺️','💰','💎','🏆','🎁','🕯️','🛁','🧴','🪥','🛏️','🏡','🧹','💊','🩺','💪','🧠','🫁','🫶'];
 const AVATAR_EMOJIS = ['😊','😎','🥰','🤩','😄','🐱','🐶','🦊','🐼','🐨','🐸','🦁','🐯','🐻','🐺','🦄','🐙','🌸','⭐','🌈','🍀','🎀','💎','🔥','🌙','☀️','🍓','🍭','🎵','🎨'];
 const COLORS = [
-  {color:'#F9C6D0',mid:'#E8879A'},{color:'#C6D9F9',mid:'#7AAAE0'},{color:'#C6EFF9',mid:'#5BBEDD'},
-  {color:'#D4C6F9',mid:'#9E7AE0'},{color:'#F9EAC6',mid:'#E0B85B'},{color:'#C6F9E0',mid:'#5BD4A0'},
-  {color:'#F9D6C6',mid:'#E0925B'},{color:'#F9C6F2',mid:'#E07ADA'},{color:'#C6F9F2',mid:'#5BD4C8'},{color:'#DCF9C6',mid:'#8ED45B'},
+  {color:'#F9C6D0',mid:'#E8879A'},{color:'#F9C6E8',mid:'#E07AB8'},{color:'#F9C6F2',mid:'#E07ADA'},
+  {color:'#D4C6F9',mid:'#9E7AE0'},{color:'#C6D9F9',mid:'#7AAAE0'},{color:'#C6EFF9',mid:'#5BBEDD'},
+  {color:'#C6F9F2',mid:'#5BD4C8'},{color:'#C6F9E0',mid:'#5BD4A0'},{color:'#DCF9C6',mid:'#8ED45B'},
+  {color:'#F9EAC6',mid:'#E0B85B'},{color:'#F9D6C6',mid:'#E0925B'},{color:'#F9E8C6',mid:'#E0A85B'},
+  {color:'#F5F5DC',mid:'#C8C89A'},{color:'#E8E8F9',mid:'#9898D0'},{color:'#F9F9C6',mid:'#D4D45B'},
+  {color:'#FFE4E1',mid:'#D4878A'},{color:'#E1F0FF',mid:'#7AAAD4'},{color:'#E8F9E8',mid:'#7AC87A'},
 ];
 const THEMES = [
   {emoji:'🌸',bg:'#FEF0F3',border:'#F7C5D0',dot:'#F9D8E0',text:'#C4647A',appBg:'#FDF7F9',accent:'#E8879A',accentBg:'#F9C6D0'},
@@ -470,14 +482,7 @@ const THEMES = [
   {emoji:'🌿',bg:'#EDFBF4',border:'#B8EDD5',dot:'#CCF0DF',text:'#3DA872',appBg:'#F0FDF6',accent:'#5BD4A0',accentBg:'#C6F9E0'},
   {emoji:'🩶',bg:'#F5F4F1',border:'#DDDBD4',dot:'#E8E6E0',text:'#888880',appBg:'#F5F4F1',accent:'#ABABAB',accentBg:'#E8E6E0'},
 ];
-const DEFAULT_HABITS = [
-  {id:'exercise',name:'운동/헬스',icon:'🏋️',color:'#F9C6D0',mid:'#E8879A'},
-  {id:'reading',name:'독서',icon:'📚',color:'#C6D9F9',mid:'#7AAAE0'},
-  {id:'water',name:'물 마시기',icon:'💧',color:'#C6EFF9',mid:'#5BBEDD'},
-  {id:'sleep',name:'수면',icon:'🌙',color:'#D4C6F9',mid:'#9E7AE0'},
-  {id:'study',name:'공부',icon:'✏️',color:'#F9EAC6',mid:'#E0B85B'},
-  {id:'meditation',name:'명상/마음챙김',icon:'🌿',color:'#C6F9E0',mid:'#5BD4A0'},
-];
+function getDefaultHabits() { return JSON.parse(JSON.stringify(t().defaultHabits)); }
 
 // ── State ──
 const today = new Date();
@@ -548,19 +553,19 @@ function applyLang() {
   document.getElementById('lbl-upload-photo').textContent = L.uploadPhoto;
   // settings theme
   document.getElementById('lbl-theme-title').textContent = L.themeTitle;
-  document.getElementById('lbl-theme-preview').textContent = L.themePreview;
+
   // settings app
   document.getElementById('lbl-app-account').textContent = L.appAccount;
-  document.getElementById('lbl-app-lang').textContent = L.appLang;
-  document.getElementById('lbl-app-lang-name').textContent = L.appLangName;
   document.getElementById('lbl-app-data').textContent = L.appData;
   document.getElementById('lbl-reset-btn').textContent = L.resetBtn;
   document.getElementById('lbl-reset-note').textContent = L.resetNote;
   document.getElementById('btn-settings-cancel').textContent = L.settingsCancel;
   document.getElementById('btn-settings-save').textContent = L.settingsSave;
-  // lang toggle in settings
-  document.getElementById('slang-ko').classList.toggle('active', appLang==='ko');
-  document.getElementById('slang-en').classList.toggle('active', appLang==='en');
+  // lang toggle in app bar
+  if(document.getElementById('app-lang-ko')){
+    document.getElementById('app-lang-ko').classList.toggle('active', appLang==='ko');
+    document.getElementById('app-lang-en').classList.toggle('active', appLang==='en');
+  }
   updateAccountRow();
   if (document.getElementById('habits-grid').innerHTML) render();
 }
@@ -570,6 +575,14 @@ window.setAuthLang = (lang) => {
   appLang = lang;
   localStorage.setItem('appLang', lang);
   applyLang();
+  if (habits.length > 0) {
+    habits = habits.map(h => {
+      const match = getDefaultHabits().find(d => d.id === h.id);
+      if (match) h.name = match.name;
+      return h;
+    });
+    render();
+  }
 };
 
 window.setAppLang = (lang, btn) => {
@@ -622,7 +635,7 @@ window.loginWithGoogle = async () => {
 window.continueAsGuest = () => {
   isGuest = true; currentUser = null;
   profileData = {nickname:'Guest',bio:'',avatarType:'emoji',avatarEmoji:'😊',avatarPhoto:''};
-  try { habits = JSON.parse(localStorage.getItem('guest_habits')||'null') || DEFAULT_HABITS; } catch(e) { habits = DEFAULT_HABITS; }
+  try { habits = JSON.parse(localStorage.getItem('guest_habits')||'null') || getDefaultHabits(); } catch(e) { habits = getDefaultHabits(); }
   try { records = JSON.parse(localStorage.getItem('guest_records')||'{}'); } catch(e) { records = {}; }
   try { selTheme = parseInt(localStorage.getItem('guest_theme')||'0'); } catch(e) { selTheme=0; }
   applyTheme(selTheme);
@@ -683,11 +696,11 @@ async function loadProfile() {
 async function loadFromFirebase() {
   try {
     const [hSnap, rSnap] = await Promise.all([getDoc(habitsRef()), getDoc(recordsRef())]);
-    habits = hSnap.exists() ? (hSnap.data().list || DEFAULT_HABITS) : DEFAULT_HABITS;
+    habits = hSnap.exists() ? (hSnap.data().list || getDefaultHabits()) : getDefaultHabits();
     if (!hSnap.exists()) await setDoc(habitsRef(), {list: habits});
     records = rSnap.exists() ? (rSnap.data()||{}) : {};
     setSyncStatus(true);
-  } catch(e) { habits = DEFAULT_HABITS; records = {}; setSyncStatus(false); }
+  } catch(e) { habits = getDefaultHabits(); records = {}; setSyncStatus(false); }
   render();
 }
 
@@ -728,7 +741,6 @@ function render() {
   const L = t();
   const isNow = viewYear===today.getFullYear()&&viewMonth===today.getMonth();
   const dim = daysInMonth(viewYear, viewMonth);
-  const fd = firstDayOfMonth(viewYear, viewMonth);
   document.getElementById('today-label').textContent = L.today(today.getFullYear(), today.getMonth(), today.getDate(), today.getDay());
   document.getElementById('month-label').textContent = `${viewYear} ${L.months[viewMonth]}`;
   const doneToday = isNow ? habits.filter(h=>records[recordKey(h.id,today.getFullYear(),today.getMonth(),today.getDate())]).length : 0;
@@ -744,9 +756,7 @@ function render() {
   document.getElementById('habits-grid').innerHTML = habits.map(h=>{
     let mc=0; for(let d=1;d<=dim;d++) if(records[recordKey(h.id,viewYear,viewMonth,d)]) mc++;
     const streak = isNow ? getStreak(h.id) : 0;
-    // 7-per-row grid: pad empty cells for the first week
     let dots='';
-    for(let i=0;i<fd;i++) dots+=`<div class="dot empty"></div>`;
     for(let d=1;d<=dim;d++){
       const done=records[recordKey(h.id,viewYear,viewMonth,d)];
       const cls=['dot',done?'checked':'',isToday(viewYear,viewMonth,d)?'today':'',isFuture(viewYear,viewMonth,d)?'future':''].filter(Boolean).join(' ');
@@ -877,12 +887,10 @@ function buildThemeRows() {
       <span style="color:${th.text};">${L.themeNames[i]}</span>
       <span class="theme-check" style="color:${th.text};">✓</span>
     </div>`).join('');
-  renderThemePreview();
 }
 window.selectTheme = (i) => {
   tempTheme=i;
   THEMES.forEach((_,j)=>{const row=document.getElementById(`trow-${j}`);row.classList.toggle('selected',j===i);row.style.borderColor=j===i?THEMES[j].border:'transparent';row.querySelector('.theme-check').style.opacity=j===i?'1':'0';});
-  renderThemePreview();
 };
 function renderThemePreview() {
   const L=t();
@@ -906,6 +914,14 @@ window.saveSettings = async () => {
   selTheme=tempTheme; applyTheme(selTheme); renderUserInfo(); applyLang();
   if(isGuest){ localStorage.setItem('guest_theme',String(selTheme)); }
   else { try{await Promise.all([setDoc(profileRef(),profileData),setDoc(settingsRef(),{theme:selTheme,lang:appLang})]);}catch(e){} }
+  // update default habit names when lang changes
+  habits = habits.map(h => {
+    const match = getDefaultHabits().find(d => d.id === h.id);
+    if (match) h.name = match.name;
+    return h;
+  });
+  await saveHabitsToFirebase();
+  render();
   window.closeSettingsModal();
 };
 

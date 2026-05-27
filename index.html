@@ -4,133 +4,173 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Habit Tracker ✨</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --bg: #FDF7F9; --text: #3D2B35; --text-light: #9B8490; --card-bg: #FFFFFF; --border: rgba(180,140,160,0.15); }
-  body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #FDF7F9; --text: #3D2B35; --text-light: #9B8490;
+  --card-bg: #FFFFFF; --border: rgba(180,140,160,0.15);
+  --accent: #E8879A; --accent-bg: #F9C6D0;
+}
+body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-  /* ── Auth ── */
-  .auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
-  .auth-box { background: white; border-radius: 24px; border: 1px solid var(--border); padding: 2.5rem 2rem; width: 100%; max-width: 380px; box-shadow: 0 4px 24px rgba(61,43,53,0.08); }
-  .auth-title { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 4px; }
-  .auth-title span { color: #E8879A; }
-  .auth-sub { font-size: 13px; color: var(--text-light); text-align: center; margin-bottom: 1.8rem; }
-  .auth-tab { display: flex; background: rgba(180,140,160,0.08); border-radius: 12px; padding: 3px; margin-bottom: 1.4rem; }
-  .auth-tab button { flex: 1; padding: 7px; border: none; background: none; border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-light); cursor: pointer; transition: all 0.15s; }
-  .auth-tab button.active { background: white; color: var(--text); box-shadow: 0 1px 4px rgba(61,43,53,0.1); }
-  .auth-field { margin-bottom: 12px; }
-  .auth-field label { font-size: 12px; font-weight: 600; color: var(--text-light); display: block; margin-bottom: 4px; }
-  .auth-field input { width: 100%; border: 1px solid var(--border); border-radius: 10px; padding: 9px 12px; font-family: 'Nunito', sans-serif; font-size: 13px; color: var(--text); outline: none; background: var(--bg); }
-  .auth-field input:focus { border-color: #E8879A; }
-  .btn-primary { width: 100%; padding: 10px; border-radius: 12px; border: none; background: #E8879A; color: white; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.15s; margin-top: 4px; }
-  .btn-primary:hover { background: #d9708a; }
-  .auth-divider { display: flex; align-items: center; gap: 10px; margin: 14px 0; }
-  .auth-divider hr { flex: 1; border: none; border-top: 1px solid var(--border); }
-  .auth-divider span { font-size: 12px; color: var(--text-light); }
-  .btn-google { width: 100%; padding: 10px; border-radius: 12px; border: 1px solid var(--border); background: white; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .btn-google:hover { background: var(--bg); }
-  .btn-google img { width: 18px; height: 18px; }
-  .auth-error { font-size: 12px; color: #c0393a; text-align: center; margin-top: 10px; min-height: 18px; }
-  .btn-guest { width: 100%; padding: 10px; border-radius: 12px; border: 1.5px dashed rgba(180,140,160,0.4); background: transparent; color: var(--text-light); font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
-  .btn-guest:hover { border-color: #E8879A; color: var(--text); background: #fdf5f7; }
-  .auth-hint { margin-top: 14px; display: flex; flex-direction: column; gap: 4px; }
-  .auth-hint span { font-size: 11px; color: var(--text-light); text-align: center; }
+/* ── Loading ── */
+.loading-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-light); }
 
-  /* ── App ── */
-  .app-wrap { padding: 1.5rem 1rem 3rem; display: none; }
-  .top-bar { max-width: 900px; margin: 0 auto 1.2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-  .app-title { font-size: 22px; font-weight: 700; }
-  .app-title span { color: #E8879A; }
-  .today-label { font-size: 12px; color: var(--text-light); margin-top: 3px; }
-  .top-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .month-nav { display: flex; align-items: center; gap: 10px; background: white; border: 1px solid var(--border); border-radius: 100px; padding: 5px 14px; }
-  .month-nav span { font-size: 13px; font-weight: 600; color: var(--text); min-width: 80px; text-align: center; }
-  .month-nav button { background: none; border: none; cursor: pointer; color: var(--text-light); font-size: 17px; line-height: 1; padding: 2px; border-radius: 50%; }
-  .btn-logout { background: white; border: 1px solid var(--border); border-radius: 100px; padding: 5px 14px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 600; color: var(--text-light); cursor: pointer; transition: all 0.15s; }
-  .btn-logout:hover { border-color: rgba(180,140,160,0.4); color: var(--text); }
-  .btn-settings { background: white; border: 1px solid var(--border); border-radius: 100px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; transition: all 0.15s; }
-  .btn-settings:hover { background: var(--bg); border-color: rgba(180,140,160,0.4); }
-  .user-info { display: flex; align-items: center; gap: 7px; cursor: pointer; }
-  .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: #F9C6D0; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #A0435A; overflow: hidden; flex-shrink: 0; border: 1.5px solid var(--border); }
-  .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .user-name-text { font-size: 13px; font-weight: 600; color: var(--text); }
+/* ── Auth ── */
+.auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+.auth-box { background: white; border-radius: 24px; border: 1px solid var(--border); padding: 2.5rem 2rem; width: 100%; max-width: 380px; box-shadow: 0 4px 24px rgba(61,43,53,0.08); }
+.auth-logo { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+.auth-logo span { color: var(--accent); }
+.auth-sub { font-size: 13px; color: var(--text-light); text-align: center; margin-bottom: 1.8rem; }
+.auth-tab { display: flex; background: rgba(180,140,160,0.08); border-radius: 12px; padding: 3px; margin-bottom: 1.4rem; }
+.auth-tab button { flex: 1; padding: 7px; border: none; background: none; border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; color: var(--text-light); cursor: pointer; transition: all 0.15s; }
+.auth-tab button.active { background: white; color: var(--text); box-shadow: 0 1px 4px rgba(61,43,53,0.1); }
+.auth-field { margin-bottom: 12px; }
+.auth-field label { font-size: 12px; font-weight: 700; color: var(--text-light); display: block; margin-bottom: 4px; }
+.auth-field input { width: 100%; border: 1px solid var(--border); border-radius: 10px; padding: 9px 12px; font-family: 'Nunito', sans-serif; font-size: 13px; color: var(--text); outline: none; background: var(--bg); }
+.auth-field input:focus { border-color: var(--accent); }
+.btn-primary { width: 100%; padding: 10px; border-radius: 12px; border: none; background: var(--accent); color: white; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.15s; margin-top: 4px; }
+.btn-primary:hover { background: #d9708a; }
+.auth-divider { display: flex; align-items: center; gap: 10px; margin: 14px 0; }
+.auth-divider hr { flex: 1; border: none; border-top: 1px solid var(--border); }
+.auth-divider span { font-size: 12px; color: var(--text-light); }
+.btn-google { width: 100%; padding: 10px; border-radius: 12px; border: 1px solid var(--border); background: white; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-google:hover { background: var(--bg); }
+.btn-google img { width: 18px; height: 18px; }
+.btn-guest { width: 100%; padding: 10px; border-radius: 12px; border: 1.5px dashed rgba(180,140,160,0.4); background: transparent; color: var(--text-light); font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+.btn-guest:hover { border-color: var(--accent); color: var(--text); background: #fdf5f7; }
+.auth-hint { margin-top: 14px; display: flex; flex-direction: column; gap: 4px; }
+.auth-hint span { font-size: 11px; color: var(--text-light); text-align: center; }
+.auth-error { font-size: 12px; color: #c0393a; text-align: center; margin-top: 10px; min-height: 18px; }
 
-  /* ── Summary ── */
-  .summary-bar { max-width: 900px; margin: 0 auto 1rem; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-  .summary-pill { background: white; border: 1px solid var(--border); border-radius: 100px; padding: 4px 14px; font-size: 12px; color: var(--text-light); }
-  .summary-pill strong { color: var(--text); }
-  .sync-status { font-size: 11px; color: var(--text-light); display: flex; align-items: center; gap: 4px; }
-  .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #ccc; }
-  .sync-dot.ok { background: #5BD4A0; }
-  .sync-dot.err { background: #E8879A; }
+/* ── App ── */
+.app-wrap { padding: 1.5rem 1rem 3rem; display: none; }
+.top-bar { max-width: 900px; margin: 0 auto 1.2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.app-title { font-size: 22px; font-weight: 700; }
+.app-title span { color: var(--accent); }
+.today-label { font-size: 12px; color: var(--text-light); margin-top: 3px; }
+.top-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.month-nav { display: flex; align-items: center; gap: 10px; background: white; border: 1px solid var(--border); border-radius: 100px; padding: 5px 14px; }
+.month-nav span { font-size: 13px; font-weight: 700; color: var(--text); min-width: 80px; text-align: center; }
+.month-nav button { background: none; border: none; cursor: pointer; color: var(--text-light); font-size: 17px; line-height: 1; padding: 2px; border-radius: 50%; }
+.btn-logout { background: white; border: 1px solid var(--border); border-radius: 100px; padding: 5px 14px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700; color: var(--text-light); cursor: pointer; transition: all 0.15s; }
+.btn-logout:hover { border-color: rgba(180,140,160,0.4); color: var(--text); }
+.btn-settings { background: white; border: 1px solid var(--border); border-radius: 100px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; transition: all 0.15s; }
+.btn-settings:hover { background: var(--bg); }
+.user-info { display: flex; align-items: center; gap: 7px; cursor: pointer; }
+.user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-bg); display: flex; align-items: center; justify-content: center; font-size: 14px; overflow: hidden; flex-shrink: 0; border: 1.5px solid var(--border); }
+.user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.user-name-text { font-size: 13px; font-weight: 700; color: var(--text); }
+.summary-bar { max-width: 900px; margin: 0 auto 1rem; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.summary-pill { background: white; border: 1px solid var(--border); border-radius: 100px; padding: 4px 14px; font-size: 12px; color: var(--text-light); }
+.summary-pill strong { color: var(--text); }
+.sync-status { font-size: 11px; color: var(--text-light); display: flex; align-items: center; gap: 4px; }
+.sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #ccc; }
+.sync-dot.ok { background: #5BD4A0; }
+.sync-dot.err { background: var(--accent); }
 
-  /* ── Grid & Cards ── */
-  .grid { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  @media (max-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-  .card { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); padding: 14px; transition: transform 0.15s; position: relative; }
-  .card:hover { transform: translateY(-2px); }
-  .card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-  .card-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
-  .card-name { font-size: 13px; font-weight: 700; line-height: 1.2; }
-  .card-count { font-size: 11px; color: var(--text-light); margin-top: 2px; }
-  .card-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s; }
-  .card:hover .card-actions { opacity: 1; }
-  .card-action-btn { width: 22px; height: 22px; border-radius: 50%; border: none; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; background: rgba(180,140,160,0.12); color: var(--text-light); transition: all 0.15s; }
-  .card-action-btn:hover { background: rgba(180,140,160,0.28); }
-  .cal-month { font-size: 10px; color: var(--text-light); font-weight: 700; letter-spacing: 0.04em; margin-bottom: 6px; }
-  .dot-grid { display: flex; flex-wrap: wrap; gap: 4px; }
-  .dot { width: 14px; height: 14px; border-radius: 50%; border: none; cursor: pointer; padding: 0; background: rgba(180,140,160,0.12); transition: all 0.15s; flex-shrink: 0; }
-  .dot:hover:not(.future) { background: rgba(180,140,160,0.28); }
-  .dot.today { box-shadow: 0 0 0 2px rgba(180,140,160,0.45); }
-  .dot.future { opacity: 0.3; cursor: default; }
-  .streak { margin-top: 8px; font-size: 11px; color: var(--text-light); display: flex; align-items: center; gap: 4px; }
-  .card-add { background: white; border-radius: 16px; border: 1.5px dashed rgba(180,140,160,0.3); padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: all 0.15s; min-height: 120px; width: 100%; }
-  .card-add:hover { border-color: rgba(180,140,160,0.6); background: #fdf2f5; }
-  .card-add-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(180,140,160,0.12); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-light); }
-  .card-add span { font-size: 12px; color: var(--text-light); font-weight: 600; }
+/* ── Grid & Cards ── */
+.grid { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+.card { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); padding: 14px; transition: transform 0.15s; position: relative; }
+.card:hover { transform: translateY(-2px); }
+.card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.card-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.card-name { font-size: 13px; font-weight: 700; line-height: 1.2; }
+.card-count { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+.card-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s; }
+.card:hover .card-actions { opacity: 1; }
+.card-action-btn { width: 22px; height: 22px; border-radius: 50%; border: none; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; background: rgba(180,140,160,0.12); color: var(--text-light); transition: all 0.15s; }
+.card-action-btn:hover { background: rgba(180,140,160,0.28); }
+.cal-month { font-size: 10px; color: var(--text-light); font-weight: 700; letter-spacing: 0.04em; margin-bottom: 6px; }
+.dot-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+.dot { width: 14px; height: 14px; border-radius: 50%; border: none; cursor: pointer; padding: 0; background: rgba(180,140,160,0.12); transition: all 0.15s; flex-shrink: 0; }
+.dot:hover:not(.future) { background: rgba(180,140,160,0.28); }
+.dot.today { box-shadow: 0 0 0 2px rgba(180,140,160,0.45); }
+.dot.future { opacity: 0.3; cursor: default; }
+.streak { margin-top: 8px; font-size: 11px; color: var(--text-light); display: flex; align-items: center; gap: 4px; }
+.card-add { background: white; border-radius: 16px; border: 1.5px dashed rgba(180,140,160,0.3); padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: all 0.15s; min-height: 120px; width: 100%; }
+.card-add:hover { border-color: rgba(180,140,160,0.6); background: #fdf2f5; }
+.card-add-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(180,140,160,0.12); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-light); }
+.card-add span { font-size: 12px; color: var(--text-light); font-weight: 700; }
 
-  /* ── Modals ── */
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(61,43,53,0.35); z-index: 100; align-items: center; justify-content: center; padding: 1rem; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: white; border-radius: 20px; padding: 1.5rem; width: 360px; max-width: 100%; max-height: 90vh; overflow-y: auto; }
-  .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 1rem; color: var(--text); }
-  .modal label { font-size: 12px; font-weight: 600; color: var(--text-light); display: block; margin-bottom: 4px; margin-top: 14px; }
-  .modal label:first-of-type { margin-top: 0; }
-  .modal input[type=text] { width: 100%; border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-family: 'Nunito', sans-serif; font-size: 13px; color: var(--text); outline: none; background: var(--bg); }
-  .modal input[type=text]:focus { border-color: rgba(180,140,160,0.5); }
-  .emoji-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-  .emoji-btn { width: 34px; height: 34px; border-radius: 10px; border: 1.5px solid transparent; background: rgba(180,140,160,0.08); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.12s; }
-  .emoji-btn:hover { background: rgba(180,140,160,0.2); }
-  .emoji-btn.selected { border-color: #E8879A; background: #fde8ef; }
-  .color-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-  .color-btn { width: 28px; height: 28px; border-radius: 50%; border: 2.5px solid transparent; cursor: pointer; transition: all 0.12s; }
-  .color-btn:hover { transform: scale(1.1); }
-  .color-btn.selected { border-color: var(--text); }
-  .modal-actions { display: flex; gap: 8px; margin-top: 1.2rem; }
-  .modal-actions button { flex: 1; padding: 9px; border-radius: 10px; border: none; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
-  .btn-cancel { background: rgba(180,140,160,0.1); color: var(--text-light); }
-  .btn-cancel:hover { background: rgba(180,140,160,0.2); }
-  .btn-save { background: #E8879A; color: white; }
-  .btn-save:hover { background: #d9708a; }
-  .btn-delete-habit { width: 100%; margin-top: 10px; padding: 8px; border-radius: 10px; border: 1px solid #fde0e0; background: #fff5f5; color: #c0393a; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; }
-  .btn-delete-habit:hover { background: #fde0e0; }
+/* ── Habit Modal ── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(61,43,53,0.35); z-index: 100; align-items: center; justify-content: center; padding: 1rem; }
+.modal-overlay.open { display: flex; }
+.modal { background: white; border-radius: 20px; padding: 1.5rem; width: 360px; max-width: 100%; max-height: 90vh; overflow-y: auto; }
+.modal-title { font-size: 16px; font-weight: 700; margin-bottom: 1rem; color: var(--text); }
+.modal label { font-size: 12px; font-weight: 700; color: var(--text-light); display: block; margin-bottom: 4px; margin-top: 14px; }
+.modal label:first-of-type { margin-top: 0; }
+.modal input[type=text] { width: 100%; border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-family: 'Nunito', sans-serif; font-size: 13px; color: var(--text); outline: none; background: var(--bg); }
+.modal input[type=text]:focus { border-color: rgba(180,140,160,0.5); }
+.emoji-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.emoji-btn { width: 34px; height: 34px; border-radius: 10px; border: 1.5px solid transparent; background: rgba(180,140,160,0.08); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.12s; }
+.emoji-btn:hover { background: rgba(180,140,160,0.2); }
+.emoji-btn.selected { border-color: var(--accent); background: #fde8ef; }
+.color-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.color-btn { width: 28px; height: 28px; border-radius: 50%; border: 2.5px solid transparent; cursor: pointer; transition: all 0.12s; }
+.color-btn:hover { transform: scale(1.1); }
+.color-btn.selected { border-color: var(--text); }
+.modal-actions { display: flex; gap: 8px; margin-top: 1.2rem; }
+.modal-actions button { flex: 1; padding: 9px; border-radius: 10px; border: none; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+.btn-cancel { background: rgba(180,140,160,0.1); color: var(--text-light); }
+.btn-cancel:hover { background: rgba(180,140,160,0.2); }
+.btn-save { background: var(--accent); color: white; }
+.btn-save:hover { background: #d9708a; }
+.btn-delete-habit { width: 100%; margin-top: 10px; padding: 8px; border-radius: 10px; border: 1px solid #fde0e0; background: #fff5f5; color: #c0393a; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; }
+.btn-delete-habit:hover { background: #fde0e0; }
 
-  /* ── Profile Modal ── */
-  .profile-avatar-preview { width: 72px; height: 72px; border-radius: 50%; background: #F9C6D0; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 1rem; border: 2px solid var(--border); overflow: hidden; }
-  .profile-avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
-  .avatar-type-tabs { display: flex; background: rgba(180,140,160,0.08); border-radius: 10px; padding: 3px; margin-bottom: 10px; }
-  .avatar-type-tabs button { flex: 1; padding: 6px; border: none; background: none; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 600; color: var(--text-light); cursor: pointer; transition: all 0.15s; }
-  .avatar-type-tabs button.active { background: white; color: var(--text); box-shadow: 0 1px 3px rgba(61,43,53,0.1); }
-  .avatar-emoji-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; max-height: 140px; overflow-y: auto; }
-  .avatar-emoji-btn { width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid transparent; background: rgba(180,140,160,0.08); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: all 0.12s; }
-  .avatar-emoji-btn:hover { background: rgba(180,140,160,0.2); }
-  .avatar-emoji-btn.selected { border-color: #E8879A; background: #fde8ef; }
-  .upload-area { border: 1.5px dashed rgba(180,140,160,0.4); border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s; margin-top: 4px; }
-  .upload-area:hover { border-color: #E8879A; background: #fdf5f7; }
-  .upload-area input { display: none; }
-  .upload-area p { font-size: 12px; color: var(--text-light); margin-top: 6px; }
-  .loading-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-light); }
+/* ── Settings Modal ── */
+.settings-modal { background: white; border-radius: 24px; padding: 0; width: 360px; max-width: 100%; max-height: 92vh; overflow-y: auto; }
+.settings-tabs { display: flex; background: rgba(180,140,160,0.08); border-radius: 14px; padding: 3px; gap: 2px; margin: 1.2rem 1.2rem 0; }
+.settings-tab { flex: 1; padding: 8px 4px; border: none; background: none; border-radius: 11px; font-size: 12px; font-weight: 700; color: var(--text-light); cursor: pointer; transition: all 0.15s; font-family: 'Nunito', sans-serif; }
+.settings-tab.active { background: white; color: var(--text); box-shadow: 0 1px 4px rgba(61,43,53,0.1); }
+.settings-body { padding: 1.2rem; }
+.s-panel { display: none; }
+.s-panel.active { display: block; }
+.s-label { font-size: 11px; font-weight: 700; color: var(--text-light); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px; margin-top: 16px; }
+.s-label:first-child { margin-top: 0; }
+.profile-avatar-preview { width: 72px; height: 72px; border-radius: 50%; background: var(--accent-bg); display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 1rem; border: 2px solid var(--border); overflow: hidden; }
+.profile-avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+.s-field { margin-bottom: 12px; }
+.s-field label { font-size: 12px; font-weight: 700; color: var(--text-light); display: block; margin-bottom: 4px; }
+.s-field input { width: 100%; border: 1px solid rgba(180,140,160,0.25); border-radius: 10px; padding: 8px 12px; font-family: 'Nunito', sans-serif; font-size: 13px; color: var(--text); background: var(--bg); outline: none; }
+.s-field input:focus { border-color: var(--accent); }
+.avatar-type-tabs { display: flex; background: rgba(180,140,160,0.08); border-radius: 10px; padding: 3px; margin-bottom: 10px; }
+.avatar-type-tabs button { flex: 1; padding: 6px; border: none; background: none; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700; color: var(--text-light); cursor: pointer; transition: all 0.15s; }
+.avatar-type-tabs button.active { background: white; color: var(--text); box-shadow: 0 1px 3px rgba(61,43,53,0.1); }
+.avatar-emoji-grid { display: flex; flex-wrap: wrap; gap: 6px; max-height: 140px; overflow-y: auto; }
+.avatar-emoji-btn { width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid transparent; background: rgba(180,140,160,0.08); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: all 0.12s; }
+.avatar-emoji-btn:hover { background: rgba(180,140,160,0.2); }
+.avatar-emoji-btn.selected { border-color: var(--accent); background: #fde8ef; }
+.upload-area { border: 1.5px dashed rgba(180,140,160,0.4); border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s; }
+.upload-area:hover { border-color: var(--accent); background: #fdf5f7; }
+.upload-area p { font-size: 12px; color: var(--text-light); margin-top: 6px; }
+/* theme rows */
+.theme-row { display: flex; align-items: center; gap: 12px; border-radius: 16px; padding: 11px 14px; border: 1.5px solid transparent; cursor: pointer; transition: all 0.15s; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.theme-row.selected { border-width: 2px; }
+.theme-dot-sm { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.theme-check { margin-left: auto; font-size: 13px; opacity: 0; }
+.theme-row.selected .theme-check { opacity: 1; }
+/* app rows */
+.app-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 14px; margin-bottom: 6px; background: rgba(180,140,160,0.06); cursor: pointer; transition: all 0.15s; }
+.app-row:hover { background: rgba(180,140,160,0.12); }
+.app-row-left { display: flex; align-items: center; gap: 10px; }
+.app-row-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.app-row-desc { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+.app-row-right { font-size: 12px; color: var(--text-light); }
+.app-row.danger-border { background: transparent; border: 1.5px dashed rgba(192,57,58,0.3); }
+.app-row.danger-border:hover { background: #fff5f5; }
+.app-row.danger-border .app-row-name { color: #c0393a; }
+.reset-note { font-size: 11px; color: var(--text-light); text-align: center; margin-top: 4px; padding: 0 4px; }
+.lang-toggle { display: flex; background: rgba(180,140,160,0.08); border-radius: 8px; padding: 2px; }
+.lang-btn { padding: 5px 10px; border: none; background: none; border-radius: 7px; font-size: 12px; font-weight: 700; color: var(--text-light); cursor: pointer; font-family: 'Nunito', sans-serif; transition: all 0.15s; }
+.lang-btn.active { background: white; color: var(--text); box-shadow: 0 1px 3px rgba(61,43,53,0.1); }
+.settings-footer { padding: 0 1.2rem 1.2rem; display: flex; gap: 8px; }
+.settings-footer button { flex: 1; padding: 10px; border-radius: 12px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; border: none; }
+.settings-footer .btn-cancel { background: rgba(180,140,160,0.1); color: var(--text-light); border: 1px solid rgba(180,140,160,0.2); }
+.settings-footer .btn-save { background: var(--accent); color: white; }
 </style>
 </head>
 <body>
@@ -140,8 +180,8 @@
 <!-- 로그인 -->
 <div class="auth-screen" id="auth-screen" style="display:none;">
   <div class="auth-box">
-    <div class="auth-title">Habit Tracker <span>✨</span></div>
-    <div class="auth-sub">Track your habits, build your life</div>
+    <div class="auth-logo">Habit Tracker <span>✨</span></div>
+    <div class="auth-sub">Track your habits, build your life.</div>
     <div class="auth-tab">
       <button class="active" id="tab-login" onclick="switchTab('login')">Log In</button>
       <button id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
@@ -154,13 +194,13 @@
     <button class="btn-google" onclick="loginWithGoogle()">
       <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">Continue with Google
     </button>
-    <div class="auth-divider"><hr><span>or</span><hr></div>
-    <button class="btn-guest" onclick="continueAsGuest()">Continue without account</button>
-    <div class="auth-hint">
-      <span>Log in = syncs across all your devices</span>
-      <span>Guest = saved on this device only</span>
-    </div>
     <div class="auth-error" id="auth-error"></div>
+    <div class="auth-divider"><hr><span>or</span><hr></div>
+    <button class="btn-guest" onclick="continueAsGuest()">Start without an account</button>
+    <div class="auth-hint">
+      <span>🔄 Log in = synced across all your devices</span>
+      <span>📱 Guest = saved on this device only</span>
+    </div>
   </div>
 </div>
 
@@ -172,7 +212,7 @@
       <div class="today-label" id="today-label"></div>
     </div>
     <div class="top-right">
-      <div class="user-info" onclick="openProfileModal()">
+      <div class="user-info" onclick="openSettingsModal('profile')">
         <div class="user-avatar" id="user-avatar"></div>
         <span class="user-name-text" id="user-name"></span>
       </div>
@@ -181,7 +221,7 @@
         <span id="month-label"></span>
         <button onclick="changeMonth(1)">&#8250;</button>
       </div>
-      <button class="btn-settings" onclick="openProfileModal()" title="프로필 설정">⚙️</button>
+      <button class="btn-settings" onclick="openSettingsModal('profile')" title="Settings">⚙️</button>
       <button class="btn-logout" onclick="logout()">Log Out</button>
     </div>
   </div>
@@ -207,31 +247,81 @@
   </div>
 </div>
 
-<!-- 프로필 모달 -->
-<div class="modal-overlay" id="profile-modal-overlay" onclick="closeProfileModalOutside(event)">
-  <div class="modal">
-    <div class="modal-title">프로필 설정</div>
-    <div class="profile-avatar-preview" id="profile-preview"></div>
-    <label>닉네임</label>
-    <input type="text" id="profile-nickname" placeholder="닉네임 입력" maxlength="16">
-    <label>프로필 이미지</label>
-    <div class="avatar-type-tabs">
-      <button class="active" id="avatar-tab-emoji" onclick="switchAvatarTab('emoji')">이모지</button>
-      <button id="avatar-tab-photo" onclick="switchAvatarTab('photo')">사진 업로드</button>
+<!-- 설정 모달 -->
+<div class="modal-overlay" id="settings-overlay" onclick="closeSettingsOutside(event)">
+  <div class="settings-modal">
+    <div class="settings-tabs">
+      <button class="settings-tab active" id="stab-profile" onclick="switchSettingsTab('profile')">🙋 나</button>
+      <button class="settings-tab" id="stab-theme" onclick="switchSettingsTab('theme')">🎨 테마</button>
+      <button class="settings-tab" id="stab-app" onclick="switchSettingsTab('app')">⚙️ 앱 설정</button>
     </div>
-    <div id="avatar-emoji-section">
-      <div class="avatar-emoji-grid" id="avatar-emoji-grid"></div>
-    </div>
-    <div id="avatar-photo-section" style="display:none;">
-      <div class="upload-area" onclick="document.getElementById('photo-input').click()">
-        <div style="font-size:28px;">📷</div>
-        <p>클릭해서 사진 선택</p>
-        <input type="file" id="photo-input" accept="image/*" onchange="handlePhotoUpload(event)">
+    <div class="settings-body">
+
+      <!-- 프로필 -->
+      <div class="s-panel active" id="s-panel-profile">
+        <div class="profile-avatar-preview" id="s-avatar-preview"></div>
+        <div class="s-field"><label>닉네임</label><input type="text" id="s-nickname" placeholder="닉네임 입력" maxlength="16"></div>
+        <div class="s-field"><label>한줄 소개</label><input type="text" id="s-bio" placeholder="오늘도 화이팅 🌱" maxlength="40"></div>
+        <div class="s-field">
+          <label>프로필 이미지</label>
+          <div class="avatar-type-tabs">
+            <button class="active" id="av-tab-emoji" onclick="switchAvatarTab('emoji')">이모지</button>
+            <button id="av-tab-photo" onclick="switchAvatarTab('photo')">사진 업로드</button>
+          </div>
+          <div id="av-emoji-sec"><div class="avatar-emoji-grid" id="avatar-emoji-grid"></div></div>
+          <div id="av-photo-sec" style="display:none;">
+            <div class="upload-area" onclick="document.getElementById('s-photo-input').click()">
+              <div style="font-size:28px;">📷</div>
+              <p>클릭해서 사진 선택</p>
+              <input type="file" id="s-photo-input" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)">
+            </div>
+          </div>
+        </div>
       </div>
+
+      <!-- 테마 -->
+      <div class="s-panel" id="s-panel-theme">
+        <div class="s-label" style="margin-top:0;">색상 테마</div>
+        <div id="theme-rows"></div>
+        <div class="s-label">미리보기</div>
+        <div id="theme-preview-chips" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;"></div>
+      </div>
+
+      <!-- 앱 설정 -->
+      <div class="s-panel" id="s-panel-app">
+        <div class="s-label" style="margin-top:0;">계정</div>
+        <div class="app-row" id="s-account-row" onclick="handleAccountAction()">
+          <div class="app-row-left">
+            <span style="font-size:16px;">🔗</span>
+            <div><div class="app-row-name" id="s-account-name">로그인하기</div><div class="app-row-desc" id="s-account-desc">기기 간 동기화</div></div>
+          </div>
+          <div class="app-row-right" id="s-account-right">→</div>
+        </div>
+        <div class="s-label">언어</div>
+        <div class="app-row" style="cursor:default;">
+          <div class="app-row-left">
+            <span style="font-size:16px;">🌐</span>
+            <div class="app-row-name">앱 언어</div>
+          </div>
+          <div class="lang-toggle">
+            <button class="lang-btn active" id="lang-ko" onclick="setLang('ko',this)">한국어</button>
+            <button class="lang-btn" id="lang-en" onclick="setLang('en',this)">English</button>
+          </div>
+        </div>
+        <div class="s-label">데이터</div>
+        <div class="app-row danger-border" onclick="confirmReset()">
+          <div class="app-row-left">
+            <span style="font-size:16px;">🗑️</span>
+            <div class="app-row-name" style="color:#c0393a;">전체 기록 초기화</div>
+          </div>
+        </div>
+        <div class="reset-note">습관 목록·달성·스트릭 데이터 모두 삭제. 되돌릴 수 없음</div>
+      </div>
+
     </div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeProfileModal()">취소</button>
-      <button class="btn-save" onclick="saveProfile()">저장</button>
+    <div class="settings-footer">
+      <button class="btn-cancel" onclick="closeSettingsModal()">취소</button>
+      <button class="btn-save" onclick="saveSettings()">저장</button>
     </div>
   </div>
 </div>
@@ -255,12 +345,21 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-const EMOJIS = ['🏋️','📚','💧','🌙','✏️','🌿','🧘','🎨','🎵','🏃','🥗','😴','💊','🧹','💰','🐶','🚴','🤸','📝','🌅','🍎','🧠','💪','🫁'];
+// ── Constants ──
+const HABIT_EMOJIS = ['🏋️','📚','💧','🌙','✏️','🌿','🧘','🎨','🎵','🏃','🥗','😴','💊','🧹','💰','🐶','🚴','🤸','📝','🌅','🍎','🧠','💪','🫁'];
 const AVATAR_EMOJIS = ['😊','😎','🥰','🤩','😄','🐱','🐶','🦊','🐼','🐨','🐸','🦁','🐯','🐻','🐺','🦄','🐙','🌸','⭐','🌈','🍀','🎀','💎','🔥','🌙','☀️','🍓','🍭','🎵','🎨'];
 const COLORS = [
   {color:'#F9C6D0',mid:'#E8879A'},{color:'#C6D9F9',mid:'#7AAAE0'},{color:'#C6EFF9',mid:'#5BBEDD'},
   {color:'#D4C6F9',mid:'#9E7AE0'},{color:'#F9EAC6',mid:'#E0B85B'},{color:'#C6F9E0',mid:'#5BD4A0'},
   {color:'#F9D6C6',mid:'#E0925B'},{color:'#F9C6F2',mid:'#E07ADA'},{color:'#C6F9F2',mid:'#5BD4C8'},{color:'#DCF9C6',mid:'#8ED45B'},
+];
+const THEMES = [
+  {name:'핑크',emoji:'🌸',bg:'#FEF0F3',border:'#F7C5D0',dot:'#F9D8E0',text:'#C4647A',appBg:'#FDF7F9',accent:'#E8879A',accentBg:'#F9C6D0'},
+  {name:'노랑',emoji:'🌼',bg:'#FEFAE8',border:'#F5E9B0',dot:'#FAF0C0',text:'#B89830',appBg:'#FDFAF0',accent:'#E0B85B',accentBg:'#F9EAC6'},
+  {name:'하늘',emoji:'🫧',bg:'#EDF7FD',border:'#BDE4F5',dot:'#D0EEF9',text:'#5099BA',appBg:'#F0F8FD',accent:'#5BBEDD',accentBg:'#C6EFF9'},
+  {name:'보라',emoji:'🪻',bg:'#F3EFFE',border:'#D8C8F5',dot:'#E4D5F8',text:'#8B6CC4',appBg:'#F5F0FE',accent:'#9E7AE0',accentBg:'#D4C6F9'},
+  {name:'민트',emoji:'🌿',bg:'#EDFBF4',border:'#B8EDD5',dot:'#CCF0DF',text:'#3DA872',appBg:'#F0FDF6',accent:'#5BD4A0',accentBg:'#C6F9E0'},
+  {name:'그레이',emoji:'🩶',bg:'#F5F4F1',border:'#DDDBD4',dot:'#E8E6E0',text:'#888880',appBg:'#F5F4F1',accent:'#ABABAB',accentBg:'#E8E6E0'},
 ];
 const DEFAULT_HABITS = [
   {id:'exercise',name:'운동/헬스',icon:'🏋️',color:'#F9C6D0',mid:'#E8879A'},
@@ -271,13 +370,22 @@ const DEFAULT_HABITS = [
   {id:'meditation',name:'명상/마음챙김',icon:'🌿',color:'#C6F9E0',mid:'#5BD4A0'},
 ];
 
+// ── State ──
 const today = new Date();
-let viewYear = today.getFullYear();
-let viewMonth = today.getMonth();
-let habits = [], records = {}, isGuest = false;
-let synced = false, currentUser = null, authMode = 'login';
-let profileData = { nickname: '', avatarType: 'emoji', avatarEmoji: '😊', avatarPhoto: '' };
-let tempAvatarEmoji = '😊', tempAvatarPhoto = '', tempAvatarType = 'emoji';
+let viewYear = today.getFullYear(), viewMonth = today.getMonth();
+let habits = [], records = {}, synced = false;
+let currentUser = null, isGuest = false, authMode = 'login';
+let appLang = 'ko', selTheme = 0;
+let profileData = { nickname:'', bio:'', avatarType:'emoji', avatarEmoji:'😊', avatarPhoto:'' };
+let tempAvEmoji = '😊', tempAvPhoto = '', tempAvType = 'emoji', tempTheme = 0;
+
+// ── Theme apply ──
+function applyTheme(idx) {
+  const t = THEMES[idx];
+  document.documentElement.style.setProperty('--bg', t.appBg);
+  document.documentElement.style.setProperty('--accent', t.accent);
+  document.documentElement.style.setProperty('--accent-bg', t.accentBg);
+}
 
 // ── Auth ──
 window.switchTab = (mode) => {
@@ -288,183 +396,95 @@ window.switchTab = (mode) => {
   document.getElementById('auth-submit-btn').textContent = mode==='login' ? 'Log In' : 'Sign Up';
   document.getElementById('auth-error').textContent = '';
 };
-
 const ERROR_MAP = {
   'auth/invalid-email':'Please enter a valid email address.',
   'auth/user-not-found':'No account found with this email.',
-  'auth/wrong-password':'Incorrect password. Please try again.',
+  'auth/wrong-password':'Incorrect password.',
   'auth/email-already-in-use':'This email is already in use.',
   'auth/weak-password':'Password must be at least 6 characters.',
   'auth/invalid-credential':'Incorrect email or password.',
-  'auth/popup-closed-by-user':'Sign-in popup was closed. Please try again.',
+  'auth/popup-closed-by-user':'Sign-in popup was closed.',
 };
-function showAuthError(e) { document.getElementById('auth-error').textContent = ERROR_MAP[e.code] || 'Something went wrong. Please try again.'; }
+function showAuthError(e) { document.getElementById('auth-error').textContent = ERROR_MAP[e.code] || 'Something went wrong.'; }
 
 window.submitAuth = async () => {
   const email = document.getElementById('auth-email').value.trim();
-  const password = document.getElementById('auth-password').value;
+  const pw = document.getElementById('auth-password').value;
   const name = document.getElementById('auth-name').value.trim();
   document.getElementById('auth-error').textContent = '';
   try {
-    if (authMode === 'login') { await signInWithEmailAndPassword(auth, email, password); }
-    else { const c = await createUserWithEmailAndPassword(auth, email, password); if(name) await updateProfile(c.user, {displayName: name}); }
+    if (authMode==='login') await signInWithEmailAndPassword(auth, email, pw);
+    else { const c = await createUserWithEmailAndPassword(auth, email, pw); if(name) await updateProfile(c.user,{displayName:name}); }
   } catch(e) { showAuthError(e); }
 };
 window.loginWithGoogle = async () => {
   document.getElementById('auth-error').textContent = '';
   try { await signInWithPopup(auth, googleProvider); } catch(e) { showAuthError(e); }
 };
-window.logout = async () => {
-  if (isGuest) {
-    isGuest = false;
-    currentUser = null;
-    habits = []; records = {};
-    document.getElementById('app-wrap').style.display = 'none';
-    document.getElementById('auth-screen').style.display = 'flex';
-  } else {
-    await signOut(auth);
-  }
-};
-
 window.continueAsGuest = () => {
-  isGuest = true;
-  currentUser = null;
-  profileData = { nickname: 'Guest', avatarType: 'emoji', avatarEmoji: '😊', avatarPhoto: '' };
-  // load from localStorage
-  try { habits = JSON.parse(localStorage.getItem('guest_habits') || 'null') || DEFAULT_HABITS; } catch(e) { habits = DEFAULT_HABITS; }
-  try { records = JSON.parse(localStorage.getItem('guest_records') || '{}'); } catch(e) { records = {}; }
+  isGuest = true; currentUser = null;
+  profileData = { nickname:'Guest', bio:'', avatarType:'emoji', avatarEmoji:'😊', avatarPhoto:'' };
+  try { habits = JSON.parse(localStorage.getItem('guest_habits')||'null') || DEFAULT_HABITS; } catch(e) { habits = DEFAULT_HABITS; }
+  try { records = JSON.parse(localStorage.getItem('guest_records')||'{}'); } catch(e) { records = {}; }
+  try { selTheme = parseInt(localStorage.getItem('guest_theme')||'0'); } catch(e) { selTheme=0; }
+  applyTheme(selTheme);
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app-wrap').style.display = 'block';
-  renderUserInfo();
-  render();
+  renderUserInfo(); render();
+};
+window.logout = async () => {
+  if (isGuest) {
+    isGuest = false; currentUser = null; habits = []; records = {};
+    document.getElementById('app-wrap').style.display = 'none';
+    document.getElementById('auth-screen').style.display = 'flex';
+  } else { await signOut(auth); }
 };
 
 onAuthStateChanged(auth, async (user) => {
   document.getElementById('loading-screen').style.display = 'none';
   if (user) {
-    currentUser = user;
+    currentUser = user; isGuest = false;
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('app-wrap').style.display = 'block';
-    await loadProfile();
-    await loadFromFirebase();
-  } else {
+    await loadProfile(); await loadFromFirebase();
+  } else if (!isGuest) {
     currentUser = null;
     document.getElementById('auth-screen').style.display = 'flex';
     document.getElementById('app-wrap').style.display = 'none';
   }
 });
 
-// ── Profile ──
-const profileRef = () => doc(db, "users", currentUser.uid, "data", "profile");
-
-async function loadProfile() {
-  try {
-    const snap = await getDoc(profileRef());
-    if (snap.exists()) profileData = { ...profileData, ...snap.data() };
-    else {
-      const fallbackName = currentUser.displayName || currentUser.email.split('@')[0];
-      profileData.nickname = fallbackName;
-      profileData.avatarEmoji = '😊';
-    }
-  } catch(e) {
-    profileData.nickname = currentUser.displayName || currentUser.email.split('@')[0];
-  }
-  renderUserInfo();
-}
-
-function renderUserInfo() {
-  document.getElementById('user-name').textContent = profileData.nickname || '사용자';
-  const av = document.getElementById('user-avatar');
-  if (profileData.avatarType === 'photo' && profileData.avatarPhoto) {
-    av.innerHTML = `<img src="${profileData.avatarPhoto}" alt="">`;
-  } else {
-    av.textContent = profileData.avatarEmoji || '😊';
-    av.style.fontSize = '16px';
-  }
-}
-
-window.openProfileModal = () => {
-  tempAvatarEmoji = profileData.avatarEmoji || '😊';
-  tempAvatarPhoto = profileData.avatarPhoto || '';
-  tempAvatarType = profileData.avatarType || 'emoji';
-  document.getElementById('profile-nickname').value = profileData.nickname || '';
-  switchAvatarTab(tempAvatarType);
-  updateProfilePreview();
-  buildAvatarEmojiGrid();
-  document.getElementById('profile-modal-overlay').classList.add('open');
-};
-window.closeProfileModal = () => document.getElementById('profile-modal-overlay').classList.remove('open');
-window.closeProfileModalOutside = (e) => { if(e.target===document.getElementById('profile-modal-overlay')) window.closeProfileModal(); };
-
-window.switchAvatarTab = (type) => {
-  tempAvatarType = type;
-  document.getElementById('avatar-tab-emoji').classList.toggle('active', type==='emoji');
-  document.getElementById('avatar-tab-photo').classList.toggle('active', type==='photo');
-  document.getElementById('avatar-emoji-section').style.display = type==='emoji' ? 'block' : 'none';
-  document.getElementById('avatar-photo-section').style.display = type==='photo' ? 'block' : 'none';
-  updateProfilePreview();
-};
-
-function buildAvatarEmojiGrid() {
-  document.getElementById('avatar-emoji-grid').innerHTML = AVATAR_EMOJIS.map(e =>
-    `<button class="avatar-emoji-btn${e===tempAvatarEmoji?' selected':''}" onclick="selectAvatarEmoji('${e}')">${e}</button>`
-  ).join('');
-}
-
-window.selectAvatarEmoji = (e) => {
-  tempAvatarEmoji = e; tempAvatarType = 'emoji';
-  buildAvatarEmojiGrid();
-  updateProfilePreview();
-};
-
-window.handlePhotoUpload = (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    tempAvatarPhoto = e.target.result;
-    tempAvatarType = 'photo';
-    updateProfilePreview();
-  };
-  reader.readAsDataURL(file);
-};
-
-function updateProfilePreview() {
-  const prev = document.getElementById('profile-preview');
-  if (tempAvatarType === 'photo' && tempAvatarPhoto) {
-    prev.innerHTML = `<img src="${tempAvatarPhoto}" alt="" style="width:100%;height:100%;object-fit:cover;">`;
-  } else {
-    prev.textContent = tempAvatarEmoji;
-    prev.style.fontSize = '36px';
-  }
-}
-
-window.saveProfile = async () => {
-  const nickname = document.getElementById('profile-nickname').value.trim() || '사용자';
-  profileData = { nickname, avatarType: tempAvatarType, avatarEmoji: tempAvatarEmoji, avatarPhoto: tempAvatarPhoto };
-  try { await setDoc(profileRef(), profileData); } catch(e) {}
-  renderUserInfo();
-  window.closeProfileModal();
-};
-
-// ── Firebase Data ──
+// ── Firebase refs ──
 const habitsRef = () => doc(db, "users", currentUser.uid, "data", "habits");
 const recordsRef = () => doc(db, "users", currentUser.uid, "data", "records");
+const profileRef = () => doc(db, "users", currentUser.uid, "data", "profile");
+const settingsRef = () => doc(db, "users", currentUser.uid, "data", "settings");
 
 function setSyncStatus(ok) {
   synced = ok;
   const bar = document.getElementById('summary-bar');
   let el = bar.querySelector('.sync-status');
-  if (!el) { el = document.createElement('div'); el.className = 'sync-status'; bar.appendChild(el); }
+  if (!el) { el = document.createElement('div'); el.className='sync-status'; bar.appendChild(el); }
   el.innerHTML = `<div class="sync-dot ${ok?'ok':'err'}"></div>${ok?'동기화됨':'오프라인'}`;
+}
+
+async function loadProfile() {
+  try {
+    const [pSnap, sSnap] = await Promise.all([getDoc(profileRef()), getDoc(settingsRef())]);
+    if (pSnap.exists()) profileData = {...profileData, ...pSnap.data()};
+    else { profileData.nickname = currentUser.displayName || currentUser.email.split('@')[0]; profileData.avatarEmoji = '😊'; }
+    if (sSnap.exists()) { selTheme = sSnap.data().theme || 0; appLang = sSnap.data().lang || 'ko'; }
+  } catch(e) { profileData.nickname = currentUser.displayName || currentUser.email.split('@')[0]; }
+  applyTheme(selTheme);
+  renderUserInfo();
 }
 
 async function loadFromFirebase() {
   try {
     const [hSnap, rSnap] = await Promise.all([getDoc(habitsRef()), getDoc(recordsRef())]);
-    if (hSnap.exists()) habits = hSnap.data().list || DEFAULT_HABITS;
-    else { habits = DEFAULT_HABITS; await setDoc(habitsRef(), {list: habits}); }
-    records = rSnap.exists() ? (rSnap.data() || {}) : {};
+    habits = hSnap.exists() ? (hSnap.data().list || DEFAULT_HABITS) : DEFAULT_HABITS;
+    if (!hSnap.exists()) await setDoc(habitsRef(), {list: habits});
+    records = rSnap.exists() ? (rSnap.data()||{}) : {};
     setSyncStatus(true);
   } catch(e) { habits = DEFAULT_HABITS; records = {}; setSyncStatus(false); }
   render();
@@ -490,49 +510,52 @@ async function toggleDay(id,y,m,d) {
 }
 window.toggleDay = toggleDay;
 
+// ── Helpers ──
 function isToday(y,m,d){return y===today.getFullYear()&&m===today.getMonth()&&d===today.getDate();}
 function isFuture(y,m,d){return new Date(y,m,d)>new Date(today.getFullYear(),today.getMonth(),today.getDate());}
 function daysInMonth(y,m){return new Date(y,m+1,0).getDate();}
-function getStreak(id){
-  let s=0,d=new Date(today.getFullYear(),today.getMonth(),today.getDate());
-  while(records[recordKey(id,d.getFullYear(),d.getMonth(),d.getDate())]){s++;d.setDate(d.getDate()-1);}
-  return s;
-}
+function getStreak(id){let s=0,d=new Date(today.getFullYear(),today.getMonth(),today.getDate());while(records[recordKey(id,d.getFullYear(),d.getMonth(),d.getDate())]){s++;d.setDate(d.getDate()-1);}return s;}
 const monthNames=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 
+// ── Render ──
+function renderUserInfo() {
+  document.getElementById('user-name').textContent = profileData.nickname || 'User';
+  const av = document.getElementById('user-avatar');
+  if (profileData.avatarType==='photo' && profileData.avatarPhoto) av.innerHTML = `<img src="${profileData.avatarPhoto}" alt="">`;
+  else { av.textContent = profileData.avatarEmoji || '😊'; av.style.fontSize = '15px'; }
+}
+
 function render() {
-  const isNow=viewYear===today.getFullYear()&&viewMonth===today.getMonth();
-  const dim=daysInMonth(viewYear,viewMonth);
+  const isNow = viewYear===today.getFullYear() && viewMonth===today.getMonth();
+  const dim = daysInMonth(viewYear, viewMonth);
   const dayNames=['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
-  document.getElementById('today-label').textContent=`${today.getFullYear()}년 ${monthNames[today.getMonth()]} ${today.getDate()}일 ${dayNames[today.getDay()]}`;
-  document.getElementById('month-label').textContent=`${viewYear}년 ${monthNames[viewMonth]}`;
-  const doneToday=isNow?habits.filter(h=>records[recordKey(h.id,today.getFullYear(),today.getMonth(),today.getDate())]).length:0;
-  const totalMonth=habits.reduce((s,h)=>{let c=0;for(let d=1;d<=daysInMonth(viewYear,viewMonth);d++)if(records[recordKey(h.id,viewYear,viewMonth,d)])c++;return s+c;},0);
-  const bar=document.getElementById('summary-bar');
-  const syncEl=bar.querySelector('.sync-status');
-  bar.innerHTML=isNow
-    ?`<div class="summary-pill">오늘 <strong>${doneToday}/${habits.length}</strong> 완료</div><div class="summary-pill">이번 달 누적 <strong>${totalMonth}</strong>회</div>`
-    :`<div class="summary-pill">${monthNames[viewMonth]} 누적 <strong>${totalMonth}</strong>회</div>`;
-  if(syncEl) bar.appendChild(syncEl);
-  else{const el=document.createElement('div');el.className='sync-status';el.innerHTML=`<div class="sync-dot ${synced?'ok':'err'}"></div>${synced?'동기화됨':'오프라인'}`;bar.appendChild(el);}
-  document.getElementById('habits-grid').innerHTML=habits.map(h=>{
-    let mc=0;for(let d=1;d<=daysInMonth(viewYear,viewMonth);d++)if(records[recordKey(h.id,viewYear,viewMonth,d)])mc++;
-    const streak=isNow?getStreak(h.id):0;
+  document.getElementById('today-label').textContent = `${today.getFullYear()}년 ${monthNames[today.getMonth()]} ${today.getDate()}일 ${dayNames[today.getDay()]}`;
+  document.getElementById('month-label').textContent = `${viewYear}년 ${monthNames[viewMonth]}`;
+  const doneToday = isNow ? habits.filter(h=>records[recordKey(h.id,today.getFullYear(),today.getMonth(),today.getDate())]).length : 0;
+  const totalMonth = habits.reduce((s,h)=>{let c=0;for(let d=1;d<=daysInMonth(viewYear,viewMonth);d++)if(records[recordKey(h.id,viewYear,viewMonth,d)])c++;return s+c;},0);
+  const bar = document.getElementById('summary-bar');
+  const syncEl = bar.querySelector('.sync-status');
+  bar.innerHTML = isNow
+    ? `<div class="summary-pill">오늘 <strong>${doneToday}/${habits.length}</strong> 완료</div><div class="summary-pill">이번 달 누적 <strong>${totalMonth}</strong>회</div>`
+    : `<div class="summary-pill">${monthNames[viewMonth]} 누적 <strong>${totalMonth}</strong>회</div>`;
+  if (syncEl) bar.appendChild(syncEl);
+  else { const el=document.createElement('div');el.className='sync-status';el.innerHTML=`<div class="sync-dot ${synced?'ok':'err'}"></div>${synced?'동기화됨':'오프라인'}`;bar.appendChild(el); }
+  document.getElementById('habits-grid').innerHTML = habits.map(h=>{
+    let mc=0; for(let d=1;d<=daysInMonth(viewYear,viewMonth);d++) if(records[recordKey(h.id,viewYear,viewMonth,d)]) mc++;
+    const streak = isNow ? getStreak(h.id) : 0;
     let dots='';
     for(let d=1;d<=dim;d++){
       const done=records[recordKey(h.id,viewYear,viewMonth,d)];
       const cls=['dot',done?'checked':'',isToday(viewYear,viewMonth,d)?'today':'',isFuture(viewYear,viewMonth,d)?'future':''].filter(Boolean).join(' ');
       dots+=`<button class="${cls}" style="${done?`background:${h.mid};`:''}" onclick="toggleDay('${h.id}',${viewYear},${viewMonth},${d})" ${isFuture(viewYear,viewMonth,d)?'disabled':''} title="${viewYear}년 ${viewMonth+1}월 ${d}일"></button>`;
     }
-    return `<div class="card">
-      <div class="card-actions"><button class="card-action-btn" onclick="openEditModal('${h.id}')">✏️</button></div>
+    return `<div class="card"><div class="card-actions"><button class="card-action-btn" onclick="openEditModal('${h.id}')">✏️</button></div>
       <div class="card-header"><div class="card-icon" style="background:${h.color};">${h.icon}</div>
       <div><div class="card-name">${h.name}</div><div class="card-count">${mc}회 완료</div></div></div>
       <div class="cal-month">${viewYear}년 ${monthNames[viewMonth]}</div>
       <div class="dot-grid">${dots}</div>
-      ${streak>1?`<div class="streak">🔥 ${streak}일 연속!</div>`:''}
-    </div>`;
-  }).join('')+`<button class="card-add" onclick="openAddModal()"><div class="card-add-icon">+</div><span>습관 추가</span></button>`;
+      ${streak>1?`<div class="streak">🔥 ${streak}일 연속!</div>`:''}</div>`;
+  }).join('') + `<button class="card-add" onclick="openAddModal()"><div class="card-add-icon">+</div><span>습관 추가</span></button>`;
 }
 window.render = render;
 
@@ -544,49 +567,181 @@ window.changeMonth = (dir) => {
 };
 
 // ── Habit Modal ──
-let modalMode='add', editingId=null, selectedEmoji=EMOJIS[0], selectedColorIdx=0;
-function buildModalSelectors(){
-  document.getElementById('emoji-grid').innerHTML=EMOJIS.map(e=>`<button class="emoji-btn${e===selectedEmoji?' selected':''}" onclick="selectEmoji('${e}')">${e}</button>`).join('');
-  document.getElementById('color-grid').innerHTML=COLORS.map((c,i)=>`<button class="color-btn${i===selectedColorIdx?' selected':''}" style="background:${c.color};" onclick="selectColor(${i})"></button>`).join('');
+let modalMode='add', editingId=null, selEmoji=HABIT_EMOJIS[0], selColorIdx=0;
+function buildHabitSelectors() {
+  document.getElementById('emoji-grid').innerHTML = HABIT_EMOJIS.map(e=>`<button class="emoji-btn${e===selEmoji?' selected':''}" onclick="selHabitEmoji('${e}')">${e}</button>`).join('');
+  document.getElementById('color-grid').innerHTML = COLORS.map((c,i)=>`<button class="color-btn${i===selColorIdx?' selected':''}" style="background:${c.color};" onclick="selHabitColor(${i})"></button>`).join('');
 }
-window.selectEmoji = e => { selectedEmoji=e; buildModalSelectors(); };
-window.selectColor = i => { selectedColorIdx=i; buildModalSelectors(); };
+window.selHabitEmoji = e => { selEmoji=e; buildHabitSelectors(); };
+window.selHabitColor = i => { selColorIdx=i; buildHabitSelectors(); };
 window.openAddModal = () => {
-  modalMode='add'; editingId=null; selectedEmoji=EMOJIS[0]; selectedColorIdx=0;
+  modalMode='add'; editingId=null; selEmoji=HABIT_EMOJIS[0]; selColorIdx=0;
   document.getElementById('modal-title').textContent='새 습관 추가';
   document.getElementById('modal-name').value='';
   document.getElementById('btn-delete-habit').style.display='none';
-  buildModalSelectors();
+  buildHabitSelectors();
   document.getElementById('modal-overlay').classList.add('open');
   setTimeout(()=>document.getElementById('modal-name').focus(),100);
 };
 window.openEditModal = id => {
   const h=habits.find(x=>x.id===id); if(!h) return;
-  modalMode='edit'; editingId=id; selectedEmoji=h.icon;
-  selectedColorIdx=COLORS.findIndex(c=>c.color===h.color); if(selectedColorIdx<0) selectedColorIdx=0;
+  modalMode='edit'; editingId=id; selEmoji=h.icon;
+  selColorIdx=COLORS.findIndex(c=>c.color===h.color); if(selColorIdx<0) selColorIdx=0;
   document.getElementById('modal-title').textContent='습관 수정';
   document.getElementById('modal-name').value=h.name;
   document.getElementById('btn-delete-habit').style.display='block';
-  buildModalSelectors();
+  buildHabitSelectors();
   document.getElementById('modal-overlay').classList.add('open');
   setTimeout(()=>document.getElementById('modal-name').focus(),100);
 };
 window.closeModal = () => document.getElementById('modal-overlay').classList.remove('open');
 window.closeModalOutside = e => { if(e.target===document.getElementById('modal-overlay')) window.closeModal(); };
 window.saveHabit = async () => {
-  const name=document.getElementById('modal-name').value.trim();
-  if(!name){document.getElementById('modal-name').focus();return;}
-  const c=COLORS[selectedColorIdx];
-  if(modalMode==='add') habits.push({id:'h'+Date.now(),name,icon:selectedEmoji,color:c.color,mid:c.mid});
-  else { const h=habits.find(x=>x.id===editingId); if(h){h.name=name;h.icon=selectedEmoji;h.color=c.color;h.mid=c.mid;} }
-  await saveHabitsToFirebase();
-  window.closeModal(); render();
+  const name=document.getElementById('modal-name').value.trim(); if(!name){document.getElementById('modal-name').focus();return;}
+  const c=COLORS[selColorIdx];
+  if(modalMode==='add') habits.push({id:'h'+Date.now(),name,icon:selEmoji,color:c.color,mid:c.mid});
+  else { const h=habits.find(x=>x.id===editingId); if(h){h.name=name;h.icon=selEmoji;h.color=c.color;h.mid=c.mid;} }
+  await saveHabitsToFirebase(); window.closeModal(); render();
 };
 window.deleteHabit = async () => {
   if(!confirm('이 습관을 삭제할까요? 기록도 모두 사라져요.')) return;
   habits=habits.filter(h=>h.id!==editingId);
-  await saveHabitsToFirebase();
-  window.closeModal(); render();
+  await saveHabitsToFirebase(); window.closeModal(); render();
+};
+
+// ── Settings Modal ──
+window.openSettingsModal = (tab='profile') => {
+  tempAvEmoji = profileData.avatarEmoji||'😊';
+  tempAvPhoto = profileData.avatarPhoto||'';
+  tempAvType = profileData.avatarType||'emoji';
+  tempTheme = selTheme;
+  document.getElementById('s-nickname').value = profileData.nickname||'';
+  document.getElementById('s-bio').value = profileData.bio||'';
+  switchAvatarTab(tempAvType);
+  buildAvatarEmojiGrid();
+  buildThemeRows();
+  updateSettingsAvatarPreview();
+  updateAccountRow();
+  switchSettingsTab(tab);
+  document.getElementById('settings-overlay').classList.add('open');
+};
+window.closeSettingsModal = () => document.getElementById('settings-overlay').classList.remove('open');
+window.closeSettingsOutside = e => { if(e.target===document.getElementById('settings-overlay')) window.closeSettingsModal(); };
+
+window.switchSettingsTab = (tab) => {
+  ['profile','theme','app'].forEach(t => {
+    document.getElementById(`s-panel-${t}`).classList.toggle('active', t===tab);
+    document.getElementById(`stab-${t}`).classList.toggle('active', t===tab);
+  });
+};
+
+function updateAccountRow() {
+  const nameEl = document.getElementById('s-account-name');
+  const descEl = document.getElementById('s-account-desc');
+  const rightEl = document.getElementById('s-account-right');
+  if (isGuest) { nameEl.textContent='로그인하기'; descEl.textContent='기기 간 동기화'; rightEl.textContent='→'; nameEl.style.color=''; }
+  else { nameEl.textContent='로그아웃'; descEl.textContent=currentUser?.email||''; rightEl.textContent=''; nameEl.style.color='#c0393a'; }
+}
+
+window.handleAccountAction = () => {
+  window.closeSettingsModal();
+  if (isGuest) { document.getElementById('app-wrap').style.display='none'; document.getElementById('auth-screen').style.display='flex'; }
+  else { if(confirm('로그아웃 하시겠어요?')) window.logout(); }
+};
+
+window.switchAvatarTab = (type) => {
+  tempAvType = type;
+  document.getElementById('av-tab-emoji').classList.toggle('active', type==='emoji');
+  document.getElementById('av-tab-photo').classList.toggle('active', type==='photo');
+  document.getElementById('av-emoji-sec').style.display = type==='emoji' ? 'block' : 'none';
+  document.getElementById('av-photo-sec').style.display = type==='photo' ? 'block' : 'none';
+};
+
+function buildAvatarEmojiGrid() {
+  document.getElementById('avatar-emoji-grid').innerHTML = AVATAR_EMOJIS.map(e=>
+    `<button class="avatar-emoji-btn${e===tempAvEmoji?' selected':''}" onclick="selectAvatarEmoji('${e}')">${e}</button>`
+  ).join('');
+}
+
+window.selectAvatarEmoji = (e) => {
+  tempAvEmoji=e; tempAvType='emoji'; buildAvatarEmojiGrid(); updateSettingsAvatarPreview();
+};
+
+window.handlePhotoUpload = (event) => {
+  const file=event.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{tempAvPhoto=ev.target.result; tempAvType='photo'; updateSettingsAvatarPreview();};
+  reader.readAsDataURL(file);
+};
+
+function updateSettingsAvatarPreview() {
+  const prev=document.getElementById('s-avatar-preview');
+  if(tempAvType==='photo'&&tempAvPhoto) prev.innerHTML=`<img src="${tempAvPhoto}" alt="">`;
+  else { prev.textContent=tempAvEmoji; prev.style.fontSize='32px'; }
+}
+
+function buildThemeRows() {
+  document.getElementById('theme-rows').innerHTML = THEMES.map((t,i)=>`
+    <div class="theme-row${i===tempTheme?' selected':''}" id="trow-${i}"
+      style="background:${t.bg};border-color:${i===tempTheme?t.border:'transparent'};"
+      onclick="selectTheme(${i})">
+      <div class="theme-dot-sm" style="background:${t.dot};">${t.emoji}</div>
+      <span style="color:${t.text};">${t.name}</span>
+      <span class="theme-check" style="color:${t.text};">✓</span>
+    </div>`).join('');
+  renderThemePreview();
+}
+
+window.selectTheme = (i) => {
+  tempTheme=i;
+  THEMES.forEach((_,j)=>{
+    const row=document.getElementById(`trow-${j}`);
+    row.classList.toggle('selected', j===i);
+    row.style.borderColor = j===i ? THEMES[j].border : 'transparent';
+    row.querySelector('.theme-check').style.opacity = j===i ? '1' : '0';
+  });
+  renderThemePreview();
+};
+
+function renderThemePreview() {
+  const t=THEMES[tempTheme];
+  document.getElementById('theme-preview-chips').innerHTML =
+    [{name:'운동/헬스',c:'#F9C6D0',tc:'#A0435A'},{name:'독서',c:'#C6D9F9',tc:'#3A5FA0'},{name:'물 마시기',c:'#C6EFF9',tc:'#2E7E9E'}]
+    .map(h=>`<div style="background:${h.c};color:${h.tc};border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;">${h.name}</div>`).join('');
+}
+
+window.setLang = (lang, btn) => {
+  appLang=lang;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+};
+
+window.confirmReset = async () => {
+  if(!confirm('⚠️ 전체 기록 초기화\n\n모든 습관 기록이 삭제되며 되돌릴 수 없어요.\n정말 삭제하시겠어요?')) return;
+  records = {};
+  if(isGuest){ localStorage.removeItem('guest_records'); }
+  else { try { await setDoc(recordsRef(), {}); } catch(e){} }
+  window.closeSettingsModal(); render();
+};
+
+window.saveSettings = async () => {
+  const nickname = document.getElementById('s-nickname').value.trim()||'User';
+  const bio = document.getElementById('s-bio').value.trim();
+  profileData = { nickname, bio, avatarType:tempAvType, avatarEmoji:tempAvEmoji, avatarPhoto:tempAvPhoto };
+  selTheme = tempTheme;
+  applyTheme(selTheme);
+  renderUserInfo();
+  if(isGuest){
+    localStorage.setItem('guest_theme', String(selTheme));
+  } else {
+    try {
+      await Promise.all([
+        setDoc(profileRef(), profileData),
+        setDoc(settingsRef(), {theme:selTheme, lang:appLang})
+      ]);
+    } catch(e){}
+  }
+  window.closeSettingsModal();
 };
 </script>
 </body>
